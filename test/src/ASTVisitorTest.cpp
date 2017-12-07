@@ -68,10 +68,8 @@ public:
     ASTVisitor()
         : _ast()
         , _typedef()
-        , _inheritance()
         , _enumConstant()
         , _enum()
-        , _parameter()
         , _constructor()
         , _destructor()
         , _method()
@@ -110,19 +108,6 @@ public:
         return true;
     }
 
-    virtual bool Enter(const Inheritance & element) override
-    {
-        TRACE2("Inheritance", element.Name());
-        _inheritance.Enter(element.Name());
-        return true;
-    }
-    virtual bool Leave(const Inheritance & element) override
-    {
-        TRACE2("Inheritance", element.Name());
-        _inheritance.Leave();
-        return true;
-    }
-
     virtual bool Enter(const EnumConstant & element) override
     {
         TRACE2("EnumConstant", element.Name());
@@ -146,19 +131,6 @@ public:
     {
         TRACE2("Enum", element.Name());
         _enum.Leave();
-        return true;
-    }
-
-    virtual bool Enter(const Parameter & element) override
-    {
-        TRACE2("Parameter", element.Name());
-        _parameter.Enter(element.Name());
-        return true;
-    }
-    virtual bool Leave(const Parameter & element) override
-    {
-        TRACE2("Parameter", element.Name());
-        _parameter.Leave();
         return true;
     }
 
@@ -282,10 +254,8 @@ public:
 public:
     EnterLeave _ast;
     EnterLeaveInfo _typedef;
-    EnterLeaveInfo _inheritance;
     EnterLeaveInfo _enumConstant;
     EnterLeaveInfo _enum;
-    EnterLeaveInfo _parameter;
     EnterLeaveInfo _constructor;
     EnterLeaveInfo _destructor;
     EnterLeaveInfo _method;
@@ -324,10 +294,8 @@ TEST_F(ASTVisitorTest, EmptyAST)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, false, "");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");
@@ -350,10 +318,8 @@ TEST_F(ASTVisitorTest, SingleNamespace)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, false, "");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");
@@ -376,10 +342,8 @@ TEST_F(ASTVisitorTest, SingleClass)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, false, "");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");
@@ -406,10 +370,8 @@ TEST_F(ASTVisitorTest, SingleClassWithMethods)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, true, "x");
     AssertVisitedInfo(visitor._constructor, true, "A");
     AssertVisitedInfo(visitor._destructor, true, "~A");
     AssertVisitedInfo(visitor._method, true, "DoIt");
@@ -432,10 +394,8 @@ TEST_F(ASTVisitorTest, SingleStruct)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, false, "");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");
@@ -462,10 +422,8 @@ TEST_F(ASTVisitorTest, SingleStructWithMethods)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, true, "x");
     AssertVisitedInfo(visitor._constructor, true, "A");
     AssertVisitedInfo(visitor._destructor, true, "~A");
     AssertVisitedInfo(visitor._method, true, "DoIt");
@@ -498,10 +456,8 @@ TEST_F(ASTVisitorTest, StructInheritance)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, true, "A");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, true, "x");
     AssertVisitedInfo(visitor._constructor, true, "B");
     AssertVisitedInfo(visitor._destructor, true, "~B");
     AssertVisitedInfo(visitor._method, true, "DoIt");
@@ -526,10 +482,8 @@ TEST_F(ASTVisitorTest, SingleEnum)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, true, "X");
     AssertVisitedInfo(visitor._enum, true, "A");
-    AssertVisitedInfo(visitor._parameter, false, "");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");
@@ -552,10 +506,8 @@ TEST_F(ASTVisitorTest, SingleVariable)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, false, "");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");
@@ -579,10 +531,8 @@ TEST_F(ASTVisitorTest, SingleFunction)
 
     AssertVisited(visitor._ast, true);
     AssertVisitedInfo(visitor._typedef, false, "");
-    AssertVisitedInfo(visitor._inheritance, false, "");
     AssertVisitedInfo(visitor._enumConstant, false, "");
     AssertVisitedInfo(visitor._enum, false, "");
-    AssertVisitedInfo(visitor._parameter, true, "y");
     AssertVisitedInfo(visitor._constructor, false, "");
     AssertVisitedInfo(visitor._destructor, false, "");
     AssertVisitedInfo(visitor._method, false, "");

@@ -43,11 +43,6 @@ public:
         bool ok = true;
         if (!Container::VisitChildren(visitor))
             ok = false;
-        for (auto const & element : _baseTypes)
-        {
-            if (!element->Visit(visitor))
-                ok = false;
-        }
 
         return ok;
     }

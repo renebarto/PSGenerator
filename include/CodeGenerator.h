@@ -51,22 +51,12 @@ public:
     virtual bool Enter(const Typedef & element) override
     {
         TRACE2(__func__, "Typedef", element.Name());
+        _stream << Indent(_indent) << "typedef " << element.Type() << " " << element.Name() << ";" << std::endl;
         return true;
     }
     virtual bool Leave(const Typedef & element) override
     {
         TRACE2(__func__, "Typedef", element.Name());
-        return true;
-    }
-
-    virtual bool Enter(const Inheritance & element) override
-    {
-        TRACE2(__func__, "Inheritance", element.Name());
-        return true;
-    }
-    virtual bool Leave(const Inheritance & element) override
-    {
-        TRACE2(__func__, "Inheritance", element.Name());
         return true;
     }
 
@@ -104,53 +94,19 @@ public:
         return true;
     }
 
-    virtual bool Enter(const Parameter & element) override
+    bool EnterFunctionBase(const FunctionBase & element)
     {
-        TRACE2(__func__, "Parameter", element.Name());
-        return true;
-    }
-    virtual bool Leave(const Parameter & element) override
-    {
-        TRACE2(__func__, "Parameter", element.Name());
-        return true;
-    }
-
-    virtual bool Enter(const Constructor & element) override
-    {
-        TRACE2(__func__, "Constructor", element.Name());
-        return true;
-    }
-    virtual bool Leave(const Constructor & element) override
-    {
-        TRACE2(__func__, "Constructor", element.Name());
-        return true;
-    }
-
-    virtual bool Enter(const Destructor & element) override
-    {
-        TRACE2(__func__, "Destructor", element.Name());
-        return true;
-    }
-    virtual bool Leave(const Destructor & element) override
-    {
-        TRACE2(__func__, "Destructor", element.Name());
-        return true;
-    }
-
-    virtual bool Enter(const Method & element) override
-    {
-        TRACE2(__func__, "Method", element.Name());
-        return true;
-    }
-    virtual bool Leave(const Method & element) override
-    {
-        TRACE2(__func__, "Method", element.Name());
-        return true;
-    }
-
-    virtual bool Enter(const Function & element) override
-    {
-        TRACE2(__func__, "Function", element.Name());
+        // TODO: Move validations to IsValid()
+        bool isObjectMember = (dynamic_pointer_cast<Object>(element.Parent()) != nullptr);
+        assert(isObjectMember ||
+               (!element.IsVirtual() && !element.IsConst() && !element.IsDefault() && !element.IsDeleted() &&
+                !element.IsFinal() && !element.IsOverride() && !element.IsPureVirtual()));
+        if (element.IsStatic())
+            assert((!element.IsVirtual() && !element.IsDefault() && !element.IsDeleted() &&
+                    !element.IsFinal() && !element.IsOverride() && !element.IsPureVirtual()));
+        if (element.IsDefault() || element.IsDeleted())
+            assert(!element.IsVirtual());
+        assert(element.IsVirtual() || (!element.IsPureVirtual()));
         _stream << Indent(_indent);
         if (element.IsInline())
             _stream << "inline ";
@@ -158,7 +114,9 @@ public:
             _stream << "static ";
         if (element.IsVirtual())
             _stream << "virtual ";
-        _stream << element.Type() << " " << element.Name() << "(";
+        if (!element.Type().empty())
+            _stream << element.Type() << " ";
+        _stream << element.Name() << "(";
         bool firstParameter = true;
         for (auto const & parameter : element.Parameters())
         {
@@ -166,7 +124,7 @@ public:
             {
                 _stream << ", ";
             }
-            parameter.GenerateCode(_stream, _indent + 1);
+            _stream << parameter.Type() << " " << parameter.Name();
             firstParameter = false;
         }
         _stream << ")";
@@ -178,13 +136,60 @@ public:
             _stream << " override";
         if (element.IsPureVirtual())
             _stream << " = 0";
+        if (element.IsDefault())
+            _stream << " = default";
+        if (element.IsDeleted())
+            _stream << " = delete";
         _stream << ";" << std::endl;
         return true;
+    }
+    bool LeaveFunctionBase(const FunctionBase & element)
+    {
+        return true;
+    }
+
+    virtual bool Enter(const Constructor & element) override
+    {
+        TRACE2(__func__, "Constructor", element.Name());
+        return EnterFunctionBase(element);
+    }
+    virtual bool Leave(const Constructor & element) override
+    {
+        TRACE2(__func__, "Constructor", element.Name());
+        return LeaveFunctionBase(element);
+    }
+
+    virtual bool Enter(const Destructor & element) override
+    {
+        TRACE2(__func__, "Destructor", element.Name());
+        return EnterFunctionBase(element);
+    }
+    virtual bool Leave(const Destructor & element) override
+    {
+        TRACE2(__func__, "Destructor", element.Name());
+        return LeaveFunctionBase(element);
+    }
+
+    virtual bool Enter(const Method & element) override
+    {
+        TRACE2(__func__, "Method", element.Name());
+        return EnterFunctionBase(element);
+    }
+    virtual bool Leave(const Method & element) override
+    {
+        TRACE2(__func__, "Method", element.Name());
+        return LeaveFunctionBase(element);
+    }
+
+    virtual bool Enter(const Function & element) override
+    {
+        TRACE2(__func__, "Function", element.Name());
+        return EnterFunctionBase(element);
     }
     virtual bool Leave(const Function & element) override
     {
         TRACE2(__func__, "Function", element.Name());
-        return true;
+        return LeaveFunctionBase(element);
     }
 
     virtual bool Enter(const Variable & element) override
@@ -203,6 +208,7 @@ public:
     virtual bool Enter(const DataMember & element) override
     {
         TRACE2(__func__, "DataMember", element.Name());
+        _stream << Indent(_indent) << element.Type() << " " << element.Name() << ";" << endl;
         return true;
     }
     virtual bool Leave(const DataMember & element) override
@@ -211,25 +217,30 @@ public:
         return true;
     }
 
-    virtual bool Enter(const Class & element) override
+    void ObjectInheritance(const Object & element)
     {
-        TRACE2(__func__, "Class", element.Name());
-        _stream << Indent(_indent) << "class " << element.Name();
-        auto baseTypes = element.BaseTypes();
-        if (!baseTypes.empty())
+        if (!element.BaseTypes().empty())
         {
             bool firstBase = true;
-            for (size_t index = 0; index < baseTypes.size(); ++index)
+            for (auto const & inheritance : element.BaseTypes())
             {
                 if (firstBase)
                     _stream << " : ";
                 else
                     _stream << ", ";
 
-//                baseTypes[index]->GenerateCode(_stream, _indent);
+                if (inheritance->IsVirtual())
+                    _stream << "virtual ";
+                _stream << inheritance->Access() << " " << inheritance->Name();
                 firstBase = false;
             }
         }
+    }
+    virtual bool Enter(const Class & element) override
+    {
+        TRACE2(__func__, "Class", element.Name());
+        _stream << Indent(_indent) << "class " << element.Name();
+        ObjectInheritance(element);
         _stream << " {" << std::endl;
         ++_indent;
         return true;
@@ -246,21 +257,7 @@ public:
     {
         TRACE2(__func__, "Struct", element.Name());
         _stream << Indent(_indent) << "struct " << element.Name();
-        auto baseTypes = element.BaseTypes();
-        if (!baseTypes.empty())
-        {
-            bool firstBase = true;
-            for (size_t index = 0; index < baseTypes.size(); ++index)
-            {
-                if (firstBase)
-                    _stream << " : ";
-                else
-                    _stream << ", ";
-
-//                baseTypes[index]->GenerateCode(_stream, _indent);
-                firstBase = false;
-            }
-        }
+        ObjectInheritance(element);
         _stream << " {" << std::endl;
         ++_indent;
         return true;

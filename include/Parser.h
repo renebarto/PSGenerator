@@ -82,13 +82,14 @@ private:
 using TokenLookupMap = std::map<CXCursor, Declaration::Ptr>;
 using TypeLookupMap = std::map<CXType, Declaration::Ptr>;
 
+using OptionsList = std::vector<std::string>;
 class Parser
 {
 public:
     Parser() = delete;
     explicit Parser(const std::string & path);
 
-    bool Parse(const std::vector<std::string> options);
+    bool Parse(const OptionsList & options);
 
     const AST & GetAST() const { return _ast; }
 

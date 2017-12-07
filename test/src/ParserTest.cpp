@@ -12,7 +12,7 @@ protected:
     virtual void TearDown() {}
 };
 
-static std::vector<std::string> compileOptions = 
+static OptionsList compileOptions =
     {
         "-x",
         "c++",
@@ -198,7 +198,9 @@ TEST_F(ParserTest, Class)
     EXPECT_EQ(size_t{0}, classDef->Classes().size());
     EXPECT_EQ(size_t{0}, classDef->Structs().size());
     EXPECT_EQ(size_t{0}, classDef->Enums().size());
-    EXPECT_EQ(size_t{3}, classDef->Functions().size());
+    EXPECT_EQ(size_t{1}, classDef->Constructors().size());
+    EXPECT_EQ(size_t{1}, classDef->Destructors().size());
+    EXPECT_EQ(size_t{1}, classDef->Methods().size());
 
     const Namespace::Ptr ns2 = ns1->Namespaces()[0];
     ASSERT_NE(nullptr, ns2);
@@ -219,7 +221,9 @@ TEST_F(ParserTest, Class)
     EXPECT_EQ(size_t{0}, classDef->Classes().size());
     EXPECT_EQ(size_t{0}, classDef->Structs().size());
     EXPECT_EQ(size_t{0}, classDef->Enums().size());
-    EXPECT_EQ(size_t{3}, classDef->Functions().size());
+    EXPECT_EQ(size_t{1}, classDef->Constructors().size());
+    EXPECT_EQ(size_t{1}, classDef->Destructors().size());
+    EXPECT_EQ(size_t{1}, classDef->Methods().size());
 
     std::string expected =
         "namespace NS1 {\n"
@@ -287,7 +291,9 @@ TEST_F(ParserTest, Struct)
     EXPECT_EQ(size_t{0}, structDef->Classes().size());
     EXPECT_EQ(size_t{0}, structDef->Structs().size());
     EXPECT_EQ(size_t{0}, structDef->Enums().size());
-    EXPECT_EQ(size_t{3}, structDef->Functions().size());
+    EXPECT_EQ(size_t{1}, structDef->Constructors().size());
+    EXPECT_EQ(size_t{1}, structDef->Destructors().size());
+    EXPECT_EQ(size_t{1}, structDef->Methods().size());
 
     structDef = ns2->Structs()[1];
     ASSERT_NE(nullptr, structDef);
@@ -298,7 +304,9 @@ TEST_F(ParserTest, Struct)
     EXPECT_EQ(size_t{0}, structDef->Classes().size());
     EXPECT_EQ(size_t{0}, structDef->Structs().size());
     EXPECT_EQ(size_t{0}, structDef->Enums().size());
-    EXPECT_EQ(size_t{3}, structDef->Functions().size());
+    EXPECT_EQ(size_t{1}, structDef->Constructors().size());
+    EXPECT_EQ(size_t{1}, structDef->Destructors().size());
+    EXPECT_EQ(size_t{1}, structDef->Methods().size());
 
     std::string expected =
         "namespace NS1 {\n"
@@ -486,7 +494,7 @@ TEST_F(ParserTest, Inheritance)
     EXPECT_EQ(expected, actual);
 }
 
-static std::vector<std::string> compileOptionsWPEFramework =
+static OptionsList compileOptionsWPEFramework =
     {
         "-x",
         "c++",

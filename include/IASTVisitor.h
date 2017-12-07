@@ -36,9 +36,6 @@ public:
     virtual bool Enter(const Enum &) = 0;
     virtual bool Leave(const Enum &) = 0;
 
-    virtual bool Enter(const Parameter &) = 0;
-    virtual bool Leave(const Parameter &) = 0;
-
     virtual bool Enter(const Constructor &) = 0;
     virtual bool Leave(const Constructor &) = 0;
 
@@ -50,9 +47,6 @@ public:
 
     virtual bool Enter(const Function &) = 0;
     virtual bool Leave(const Function &) = 0;
-
-    virtual bool Enter(const Inheritance &) = 0;
-    virtual bool Leave(const Inheritance &) = 0;
 
     virtual bool Enter(const Variable &) = 0;
     virtual bool Leave(const Variable &) = 0;

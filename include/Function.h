@@ -66,13 +66,15 @@ public:
 
     FunctionBase() = delete;
     explicit FunctionBase(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
-                      std::string type, ParameterList parameters,
-                      FunctionFlags flags)
+                          std::string type, ParameterList parameters,
+                          FunctionFlags flags)
         : Declaration(std::move(parent), std::move(name), accessSpecifier)
           , _type(std::move(type))
           , _parameters(std::move(parameters))
           , _flags(flags)
     {
+        if (_flags & FunctionFlags::PureVirtual)
+            _flags = static_cast<FunctionFlags>(_flags | FunctionFlags::Virtual);
     }
     explicit FunctionBase(Declaration::WeakPtr parent, CXCursor token)
         : Declaration(std::move(parent), token)
@@ -98,7 +100,7 @@ public:
         }
         _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
         _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isVirtual(token) != 0) ? FunctionFlags::Virtual : 0));
-        _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? FunctionFlags::PureVirtual : 0));
+        _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? (FunctionFlags::PureVirtual | FunctionFlags::Virtual) : 0));
         _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
     }
     const std::string & Type() const { return _type; }
@@ -109,6 +111,8 @@ public:
     bool IsPureVirtual() const { return (_flags & FunctionFlags::PureVirtual) != 0; }
     bool IsFinal() const { return (_flags & FunctionFlags::Final) != 0; }
     bool IsStatic() const { return (_flags & FunctionFlags::Static) != 0; }
+    bool IsDefault() const { return (_flags & FunctionFlags::Default) != 0; }
+    bool IsDeleted() const { return (_flags & FunctionFlags::Delete) != 0; }
     bool IsInline() const { return (_flags & FunctionFlags::Inline) != 0; }
 
     virtual bool Visit(IASTVisitor & visitor) const = 0;
@@ -186,13 +190,6 @@ public:
         bool ok = true;
         if (!visitor.Enter(*this))
             ok = false;
-        for (auto const & parameter : Parameters())
-        {
-            if (!visitor.Enter(parameter))
-                ok = false;
-            if (!visitor.Leave(parameter))
-                ok = false;
-        }
         if (!visitor.Leave(*this))
             ok = false;
         return ok;
@@ -234,13 +231,6 @@ public:
         bool ok = true;
         if (!visitor.Enter(*this))
             ok = false;
-        for (auto const & parameter : Parameters())
-        {
-            if (!visitor.Enter(parameter))
-                ok = false;
-            if (!visitor.Leave(parameter))
-                ok = false;
-        }
         if (!visitor.Leave(*this))
             ok = false;
         return ok;
@@ -283,13 +273,6 @@ public:
         bool ok = true;
         if (!visitor.Enter(*this))
             ok = false;
-        for (auto const & parameter : Parameters())
-        {
-            if (!visitor.Enter(parameter))
-                ok = false;
-            if (!visitor.Leave(parameter))
-                ok = false;
-        }
         if (!visitor.Leave(*this))
             ok = false;
         return ok;
@@ -329,13 +312,6 @@ public:
         bool ok = true;
         if (!visitor.Enter(*this))
             ok = false;
-        for (auto const & parameter : Parameters())
-        {
-            if (!visitor.Enter(parameter))
-                ok = false;
-            if (!visitor.Leave(parameter))
-                ok = false;
-        }
         if (!visitor.Leave(*this))
             ok = false;
         return ok;

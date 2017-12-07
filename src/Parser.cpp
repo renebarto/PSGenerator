@@ -54,7 +54,7 @@ Parser::Parser(const std::string & path)
 
 }
 
-bool Parser::Parse(const std::vector<std::string> options)
+bool Parser::Parse(const OptionsList & options)
 {
     fstream stream(_path);
 

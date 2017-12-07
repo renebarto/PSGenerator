@@ -11,7 +11,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
     CPPParser::Parser parser(argv[1]);
-    if (!parser.Parse())
+    CPPParser::OptionsList options;
+    if (!parser.Parse(options))
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }

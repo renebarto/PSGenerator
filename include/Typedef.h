@@ -16,6 +16,12 @@ public:
     using List = std::vector<Ptr>;
 
     Typedef() = delete;
+    explicit Typedef(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+                     std::string type)
+        : Declaration(std::move(parent), std::move(name), accessSpecifier)
+        , _type(std::move(type))
+    {
+    }
     explicit Typedef(Declaration::WeakPtr parent, CXCursor token)
         : Declaration(std::move(parent), token)
         , _type(ConvertString(clang_getTypeSpelling(clang_getTypedefDeclUnderlyingType(token))))
