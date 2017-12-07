@@ -1,0 +1,27 @@
+project(LibClang)
+
+execute_process(COMMAND llvm-config --includedir
+    OUTPUT_VARIABLE LLVM_INCLUDE_DIRS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND llvm-config --libdir
+    OUTPUT_VARIABLE LLVM_LIBRARY_DIRS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+message(STATUS "LLVM_INCLUDE_DIRS=${LLVM_INCLUDE_DIRS}")
+message(STATUS "LLVM_LIBRARY_DIRS=${LLVM_LIBRARY_DIRS}")
+
+find_path(
+    LIB_CLANG_INCLUDE_DIRS
+    NAMES clang-c/Index.h
+    HINTS ${LLVM_INCLUDE_DIRS})
+
+find_library(LIB_CLANG_LIB NAMES clang
+    HINTS ${LLVM_LIBRARY_DIRS})
+
+message(STATUS "LIB_CLANG_INCLUDE_DIRS=${LIB_CLANG_INCLUDE_DIRS}")
+message(STATUS "LIB_CLANG_LIB=${LIB_CLANG_LIB}")
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LIB_CLANG DEFAULT_MSG
+    LIB_CLANG_LIB LIB_CLANG_INCLUDE_DIRS)
+
