@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.5)
 project(PSGenerator)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -26,7 +26,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 add_subdirectory(libclang)
 
-include(setup_target_properties_library)
+include(setup_target_properties_executable)
 include(show_target_properties)
 include(display_list)
 
@@ -103,7 +103,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PACKAGE_VERSION_MAJOR
 set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PACKAGE_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
-setup_target_properties_library(${PROJECT_NAME})
+setup_target_properties_executable(${PROJECT_NAME})
 
 if (CMAKE_VERBOSE_MAKEFILE)
     show_target_properties(${PROJECT_NAME})

@@ -89,7 +89,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PACKAGE_VERSION_MAJOR
 set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PACKAGE_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
-setup_target_properties_library(${PROJECT_NAME})
+setup_target_properties_executable(${PROJECT_NAME})
 
 if (CMAKE_VERBOSE_MAKEFILE)
     show_target_properties(${PROJECT_NAME})
