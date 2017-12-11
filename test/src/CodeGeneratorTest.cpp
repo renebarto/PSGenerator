@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <unittest-c++/UnitTestC++.h>
 
 #include <iostream>
 #include <include/CodeGenerator.h>
@@ -10,7 +10,7 @@ namespace CPPParser {
 namespace Test {
 
 class CodeGeneratorTest
-    : public ::testing::Test
+    : public ::UnitTestCpp::TestFixture
 {
 protected:
     virtual void SetUp()
@@ -22,7 +22,7 @@ protected:
     }
 };
 
-TEST_F(CodeGeneratorTest, EmptyAST)
+TEST_FIXTURE(CodeGeneratorTest, EmptyAST)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -36,7 +36,7 @@ TEST_F(CodeGeneratorTest, EmptyAST)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleNamespace)
+TEST_FIXTURE(CodeGeneratorTest, SingleNamespace)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -53,7 +53,7 @@ TEST_F(CodeGeneratorTest, SingleNamespace)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleNamespaceAnonymous)
+TEST_FIXTURE(CodeGeneratorTest, SingleNamespaceAnonymous)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -70,7 +70,7 @@ TEST_F(CodeGeneratorTest, SingleNamespaceAnonymous)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleClass)
+TEST_FIXTURE(CodeGeneratorTest, SingleClass)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -87,7 +87,7 @@ TEST_F(CodeGeneratorTest, SingleClass)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleClassWithMethods)
+TEST_FIXTURE(CodeGeneratorTest, SingleClassWithMethods)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -111,7 +111,7 @@ TEST_F(CodeGeneratorTest, SingleClassWithMethods)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleClassWithMethodsAndVariables)
+TEST_FIXTURE(CodeGeneratorTest, SingleClassWithMethodsAndVariables)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -137,7 +137,7 @@ TEST_F(CodeGeneratorTest, SingleClassWithMethodsAndVariables)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleStruct)
+TEST_FIXTURE(CodeGeneratorTest, SingleStruct)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -154,7 +154,7 @@ TEST_F(CodeGeneratorTest, SingleStruct)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleStructWithMethods)
+TEST_FIXTURE(CodeGeneratorTest, SingleStructWithMethods)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -178,7 +178,7 @@ TEST_F(CodeGeneratorTest, SingleStructWithMethods)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, StructInheritance)
+TEST_FIXTURE(CodeGeneratorTest, StructInheritance)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -213,7 +213,7 @@ TEST_F(CodeGeneratorTest, StructInheritance)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleEnum)
+TEST_FIXTURE(CodeGeneratorTest, SingleEnum)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -233,7 +233,7 @@ TEST_F(CodeGeneratorTest, SingleEnum)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleEnumAnonymous)
+TEST_FIXTURE(CodeGeneratorTest, SingleEnumAnonymous)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -253,7 +253,7 @@ TEST_F(CodeGeneratorTest, SingleEnumAnonymous)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleEnumWithBaseType)
+TEST_FIXTURE(CodeGeneratorTest, SingleEnumWithBaseType)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -273,7 +273,7 @@ TEST_F(CodeGeneratorTest, SingleEnumWithBaseType)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleVariable)
+TEST_FIXTURE(CodeGeneratorTest, SingleVariable)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -289,7 +289,7 @@ TEST_F(CodeGeneratorTest, SingleVariable)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleFunction)
+TEST_FIXTURE(CodeGeneratorTest, SingleFunction)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -306,7 +306,7 @@ TEST_F(CodeGeneratorTest, SingleFunction)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleFunctionStatic)
+TEST_FIXTURE(CodeGeneratorTest, SingleFunctionStatic)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -323,7 +323,7 @@ TEST_F(CodeGeneratorTest, SingleFunctionStatic)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleFunctionInline)
+TEST_FIXTURE(CodeGeneratorTest, SingleFunctionInline)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);
@@ -340,7 +340,7 @@ TEST_F(CodeGeneratorTest, SingleFunctionInline)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(CodeGeneratorTest, SingleTypedef)
+TEST_FIXTURE(CodeGeneratorTest, SingleTypedef)
 {
     std::ostringstream stream;
     CodeGenerator visitor(stream);

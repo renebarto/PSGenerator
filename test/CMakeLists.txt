@@ -1,7 +1,6 @@
 project(PSGenerator.test)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
+message(STATUS "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
 set(CMAKE_CXX_STANDARD 11)
 
 include(setup_target_properties_library)
@@ -10,7 +9,7 @@ include(display_list)
 
 message("Setting up ${PROJECT_NAME}")
 
-add_subdirectory(googletest)
+find_package(UnitTest-C++ REQUIRED)
 
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(TARGET_NAME ${PROJECT_NAME})
@@ -26,7 +25,7 @@ set(PACKAGE_DEFINITIONS
 
 set(PACKAGE_INCLUDE_DIRS
     .
-    ./googletest
+    ${UNITTEST_CPP_INCLUDE_DIRS}
     ..
     ${LIB_CLANG_INCLUDE_DIRS})
 
@@ -42,10 +41,10 @@ set(PACKAGE_LIBS
     ${CMAKE_THREAD_LIBS_INIT}
     ${CMAKE_DL_LIBS}
     ${LIB_CLANG_LIB}
-    gtest
+    ${UNITTEST_CPP_LIBRARIES}
     ${PACKAGE_DEPENDENCIES})
 
-set(PACKAGE_SOURCES gtest_main.cc)
+set(PACKAGE_SOURCES main.cpp)
 file(GLOB TEST_INCLUDES include/*.h)
 file(GLOB TEST_SOURCES src/*.cpp)
 file(GLOB PARSER_INCLUDES ../include/*.h)

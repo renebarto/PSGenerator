@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <unittest-c++/UnitTestC++.h>
 
 #include <iostream>
 #include <include/CodeGenerator.h>
@@ -10,7 +10,7 @@ namespace CPPParser {
 namespace Test {
 
 class ASTBuildTest
-    : public ::testing::Test
+    : public ::UnitTestCpp::TestFixture
 {
 protected:
     virtual void SetUp()
@@ -22,7 +22,7 @@ protected:
     }
 };
 
-TEST_F(ASTBuildTest, EmptyAST)
+TEST_FIXTURE(ASTBuildTest, EmptyAST)
 {
     AST ast;
 

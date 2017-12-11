@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
+#include <unittest-c++/UnitTestC++.h>
 #include <include/Parser.h>
 #include <include/TestData.h>
 
 namespace CPPParser {
 namespace Test {
 
-class ParserTest : public ::testing::Test {
+class ParserTest : public ::UnitTestCpp::TestFixture {
 protected:
     virtual void SetUp() {}
 
@@ -19,7 +19,7 @@ static OptionsList compileOptions =
         "-std=c++11",
     };
 
-TEST_F(ParserTest, Empty)
+TEST_FIXTURE(ParserTest, Empty)
 {
     Parser parser(TestData::EmptyHeader());
 
@@ -41,7 +41,7 @@ TEST_F(ParserTest, Empty)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, SingleNamespace)
+TEST_FIXTURE(ParserTest, SingleNamespace)
 {
     Parser parser(TestData::SingleNamespaceHeader());
 
@@ -74,7 +74,7 @@ TEST_F(ParserTest, SingleNamespace)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, NestedNamespace)
+TEST_FIXTURE(ParserTest, NestedNamespace)
 {
     Parser parser(TestData::NestedNamespaceHeader());
 
@@ -119,7 +119,7 @@ TEST_F(ParserTest, NestedNamespace)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, AnonymousNamespace)
+TEST_FIXTURE(ParserTest, AnonymousNamespace)
 {
     Parser parser(TestData::AnonymousNamespaceHeader());
 
@@ -164,7 +164,7 @@ TEST_F(ParserTest, AnonymousNamespace)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, Class)
+TEST_FIXTURE(ParserTest, Class)
 {
     Parser parser(TestData::ClassHeader());
 
@@ -246,7 +246,7 @@ TEST_F(ParserTest, Class)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, Struct)
+TEST_FIXTURE(ParserTest, Struct)
 {
     Parser parser(TestData::StructHeader());
 
@@ -329,7 +329,7 @@ TEST_F(ParserTest, Struct)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, Enum)
+TEST_FIXTURE(ParserTest, Enum)
 {
     Parser parser(TestData::EnumHeader());
 
@@ -379,7 +379,7 @@ TEST_F(ParserTest, Enum)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, EnumAnonymous)
+TEST_FIXTURE(ParserTest, EnumAnonymous)
 {
     Parser parser(TestData::EnumAnonymousHeader());
 
@@ -429,7 +429,7 @@ TEST_F(ParserTest, EnumAnonymous)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, Inheritance)
+TEST_FIXTURE(ParserTest, Inheritance)
 {
     Parser parser(TestData::InheritanceHeader());
 
@@ -502,7 +502,7 @@ static OptionsList compileOptionsWPEFramework =
         "-I.",
     };
 
-TEST_F(ParserTest, IMemory)
+TEST_FIXTURE(ParserTest, IMemory)
 {
     Parser parser(TestData::IMemoryHeader());
 
@@ -589,7 +589,7 @@ TEST_F(ParserTest, IMemory)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, IPlugin)
+TEST_FIXTURE(ParserTest, IPlugin)
 {
     Parser parser(TestData::IPluginHeader());
 
@@ -671,7 +671,7 @@ TEST_F(ParserTest, IPlugin)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, IPluginExtended)
+TEST_FIXTURE(ParserTest, IPluginExtended)
 {
     Parser parser(TestData::IPluginHeader());
 
@@ -725,7 +725,7 @@ TEST_F(ParserTest, IPluginExtended)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, IWeb)
+TEST_FIXTURE(ParserTest, IWeb)
 {
     Parser parser(TestData::IPluginHeader());
 
@@ -778,7 +778,7 @@ TEST_F(ParserTest, IWeb)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, IWebSocket)
+TEST_FIXTURE(ParserTest, IWebSocket)
 {
     Parser parser(TestData::IPluginHeader());
 
@@ -851,7 +851,7 @@ TEST_F(ParserTest, IWebSocket)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, IChannel)
+TEST_FIXTURE(ParserTest, IChannel)
 {
     Parser parser(TestData::IPluginHeader());
 
@@ -904,7 +904,7 @@ TEST_F(ParserTest, IChannel)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(ParserTest, ISecurity)
+TEST_FIXTURE(ParserTest, ISecurity)
 {
     Parser parser(TestData::IPluginHeader());
 

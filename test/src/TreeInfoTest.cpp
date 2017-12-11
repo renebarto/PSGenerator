@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <unittest-c++/UnitTestC++.h>
 
 #include <iostream>
 #include <include/TreeInfo.h>
@@ -10,7 +10,7 @@ namespace CPPParser {
 namespace Test {
 
 class TreeInfoTest
-    : public ::testing::Test
+    : public ::UnitTestCpp::TestFixture
 {
 protected:
     virtual void SetUp()
@@ -22,7 +22,7 @@ protected:
     }
 };
 
-TEST_F(TreeInfoTest, EmptyAST)
+TEST_FIXTURE(TreeInfoTest, EmptyAST)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -40,7 +40,7 @@ TEST_F(TreeInfoTest, EmptyAST)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleNamespace)
+TEST_FIXTURE(TreeInfoTest, SingleNamespace)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -63,7 +63,7 @@ TEST_F(TreeInfoTest, SingleNamespace)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleNamespaceAnonymous)
+TEST_FIXTURE(TreeInfoTest, SingleNamespaceAnonymous)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -86,7 +86,7 @@ TEST_F(TreeInfoTest, SingleNamespaceAnonymous)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleClass)
+TEST_FIXTURE(TreeInfoTest, SingleClass)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -107,7 +107,7 @@ TEST_F(TreeInfoTest, SingleClass)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleClassWithMethods)
+TEST_FIXTURE(TreeInfoTest, SingleClassWithMethods)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -145,7 +145,7 @@ TEST_F(TreeInfoTest, SingleClassWithMethods)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleClassWithMethodsAndVariables)
+TEST_FIXTURE(TreeInfoTest, SingleClassWithMethodsAndVariables)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -185,7 +185,7 @@ TEST_F(TreeInfoTest, SingleClassWithMethodsAndVariables)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleStruct)
+TEST_FIXTURE(TreeInfoTest, SingleStruct)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -206,7 +206,7 @@ TEST_F(TreeInfoTest, SingleStruct)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleStructWithMethods)
+TEST_FIXTURE(TreeInfoTest, SingleStructWithMethods)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -244,7 +244,7 @@ TEST_F(TreeInfoTest, SingleStructWithMethods)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, StructInheritance)
+TEST_FIXTURE(TreeInfoTest, StructInheritance)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -305,7 +305,7 @@ TEST_F(TreeInfoTest, StructInheritance)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleEnum)
+TEST_FIXTURE(TreeInfoTest, SingleEnum)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -329,7 +329,7 @@ TEST_F(TreeInfoTest, SingleEnum)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleEnumAnonymous)
+TEST_FIXTURE(TreeInfoTest, SingleEnumAnonymous)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -353,7 +353,7 @@ TEST_F(TreeInfoTest, SingleEnumAnonymous)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleEnumWithBaseType)
+TEST_FIXTURE(TreeInfoTest, SingleEnumWithBaseType)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -377,7 +377,7 @@ TEST_F(TreeInfoTest, SingleEnumWithBaseType)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleVariable)
+TEST_FIXTURE(TreeInfoTest, SingleVariable)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -397,7 +397,7 @@ TEST_F(TreeInfoTest, SingleVariable)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleFunction)
+TEST_FIXTURE(TreeInfoTest, SingleFunction)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -422,7 +422,7 @@ TEST_F(TreeInfoTest, SingleFunction)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleFunctionStatic)
+TEST_FIXTURE(TreeInfoTest, SingleFunctionStatic)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -447,7 +447,7 @@ TEST_F(TreeInfoTest, SingleFunctionStatic)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleFunctionInline)
+TEST_FIXTURE(TreeInfoTest, SingleFunctionInline)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);
@@ -472,7 +472,7 @@ TEST_F(TreeInfoTest, SingleFunctionInline)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TreeInfoTest, SingleTypedef)
+TEST_FIXTURE(TreeInfoTest, SingleTypedef)
 {
     std::ostringstream stream;
     TreeInfo visitor(stream);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <include/IASTVisitor.h>
 #include <include/AST.h>
 #include <include/Typedef.h>

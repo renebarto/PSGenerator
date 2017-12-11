@@ -1,17 +1,17 @@
-#include <gtest/gtest.h>
+#include <unittest-c++/UnitTestC++.h>
 #include <include/Utility.h>
 
 namespace Utility {
 namespace Test {
 
-class UtilityTest : public ::testing::Test {
+class UtilityTest : public ::UnitTestCpp::TestFixture {
 protected:
     virtual void SetUp() {}
 
     virtual void TearDown() {}
 };
 
-TEST_F(UtilityTest, Trim)
+TEST_FIXTURE(UtilityTest, Trim)
 {
     std::string expected = "ABC";
     EXPECT_EQ(expected, Trim("ABC"));
@@ -20,7 +20,7 @@ TEST_F(UtilityTest, Trim)
     EXPECT_EQ(expected, Trim(" ABC "));
 }
 
-TEST_F(UtilityTest, SplitSingle)
+TEST_FIXTURE(UtilityTest, SplitSingle)
 {
     std::string input = "ABC";
     std::vector<std::string> expected = { "ABC" };
@@ -29,7 +29,7 @@ TEST_F(UtilityTest, SplitSingle)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(UtilityTest, SplitTwoParts)
+TEST_FIXTURE(UtilityTest, SplitTwoParts)
 {
     std::string input = "ABC,DEF";
     std::vector<std::string> expected = { "ABC", "DEF" };
@@ -38,7 +38,7 @@ TEST_F(UtilityTest, SplitTwoParts)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(UtilityTest, SplitTwoPartsWithSpaces)
+TEST_FIXTURE(UtilityTest, SplitTwoPartsWithSpaces)
 {
     std::string input = "ABC , DEF";
     std::vector<std::string> expected = { "ABC", "DEF" };
@@ -47,7 +47,7 @@ TEST_F(UtilityTest, SplitTwoPartsWithSpaces)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(UtilityTest, SplitPathsNoDirsNoExtension)
+TEST_FIXTURE(UtilityTest, SplitPathsNoDirsNoExtension)
 {
     std::string input = "Filename";
     std::string expectedDirectory = {};
@@ -62,7 +62,7 @@ TEST_F(UtilityTest, SplitPathsNoDirsNoExtension)
     EXPECT_EQ(expectedExtension, actualExtension);
 }
 
-TEST_F(UtilityTest, SplitPathNoExtension)
+TEST_FIXTURE(UtilityTest, SplitPathNoExtension)
 {
     std::string input = "/Path/Dir/Filename";
     std::string expectedDirectory = "/Path/Dir";
@@ -77,7 +77,7 @@ TEST_F(UtilityTest, SplitPathNoExtension)
     EXPECT_EQ(expectedExtension, actualExtension);
 }
 
-TEST_F(UtilityTest, SplitPathNoDirs)
+TEST_FIXTURE(UtilityTest, SplitPathNoDirs)
 {
     std::string input = "Filename.Extension";
     std::string expectedDirectory = {};
@@ -92,7 +92,7 @@ TEST_F(UtilityTest, SplitPathNoDirs)
     EXPECT_EQ(expectedExtension, actualExtension);
 }
 
-TEST_F(UtilityTest, SplitPath)
+TEST_FIXTURE(UtilityTest, SplitPath)
 {
     std::string input = "/Path/Dir/Filename.Extension";
     std::string expectedDirectory = "/Path/Dir";

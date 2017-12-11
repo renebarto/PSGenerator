@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <unittest-c++/UnitTestC++.h>
 #include <include/IASTVisitor.h>
 #include <include/AST.h>
 #include <include/Variable.h>
@@ -268,7 +268,7 @@ public:
 };
 
 class ASTVisitorTest
-    : public ::testing::Test
+    : public ::UnitTestCpp::TestFixture
 {
 protected:
     virtual void SetUp()
@@ -284,7 +284,7 @@ protected:
 
 #define AssertVisitedInfo(info, visited, name) { if (visited) { EXPECT_TRUE(info.enter); EXPECT_TRUE(info.leave); EXPECT_EQ(name, info.lastID); } else { EXPECT_FALSE(info.enter); EXPECT_FALSE(info.leave); EXPECT_EQ(name, info.lastID); } }
 
-TEST_F(ASTVisitorTest, EmptyAST)
+TEST_FIXTURE(ASTVisitorTest, EmptyAST)
 {
     ASTVisitor visitor;
 
@@ -307,7 +307,7 @@ TEST_F(ASTVisitorTest, EmptyAST)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleNamespace)
+TEST_FIXTURE(ASTVisitorTest, SingleNamespace)
 {
     ASTVisitor visitor;
 
@@ -331,7 +331,7 @@ TEST_F(ASTVisitorTest, SingleNamespace)
     AssertVisitedInfo(visitor._namespace, true, "NS");
 }
 
-TEST_F(ASTVisitorTest, SingleClass)
+TEST_FIXTURE(ASTVisitorTest, SingleClass)
 {
     ASTVisitor visitor;
 
@@ -355,7 +355,7 @@ TEST_F(ASTVisitorTest, SingleClass)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleClassWithMethods)
+TEST_FIXTURE(ASTVisitorTest, SingleClassWithMethods)
 {
     ASTVisitor visitor;
 
@@ -383,7 +383,7 @@ TEST_F(ASTVisitorTest, SingleClassWithMethods)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleStruct)
+TEST_FIXTURE(ASTVisitorTest, SingleStruct)
 {
     ASTVisitor visitor;
 
@@ -407,7 +407,7 @@ TEST_F(ASTVisitorTest, SingleStruct)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleStructWithMethods)
+TEST_FIXTURE(ASTVisitorTest, SingleStructWithMethods)
 {
     ASTVisitor visitor;
 
@@ -435,7 +435,7 @@ TEST_F(ASTVisitorTest, SingleStructWithMethods)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, StructInheritance)
+TEST_FIXTURE(ASTVisitorTest, StructInheritance)
 {
     ASTVisitor visitor;
 
@@ -469,7 +469,7 @@ TEST_F(ASTVisitorTest, StructInheritance)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleEnum)
+TEST_FIXTURE(ASTVisitorTest, SingleEnum)
 {
     ASTVisitor visitor;
 
@@ -495,7 +495,7 @@ TEST_F(ASTVisitorTest, SingleEnum)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleVariable)
+TEST_FIXTURE(ASTVisitorTest, SingleVariable)
 {
     ASTVisitor visitor;
 
@@ -519,7 +519,7 @@ TEST_F(ASTVisitorTest, SingleVariable)
     AssertVisitedInfo(visitor._namespace, false, "");
 }
 
-TEST_F(ASTVisitorTest, SingleFunction)
+TEST_FIXTURE(ASTVisitorTest, SingleFunction)
 {
     ASTVisitor visitor;
 
