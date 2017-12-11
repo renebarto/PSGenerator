@@ -22,11 +22,7 @@ public:
         , _type(std::move(type))
     {
     }
-    explicit Typedef(Declaration::WeakPtr parent, CXCursor token)
-        : Declaration(std::move(parent), token)
-        , _type(ConvertString(clang_getTypeSpelling(clang_getTypedefDeclUnderlyingType(token))))
-    {
-    }
+
     const std::string & Type() const { return _type; }
 
     virtual bool Visit(IASTVisitor & visitor) const override

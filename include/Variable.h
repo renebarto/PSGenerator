@@ -12,16 +12,14 @@ namespace CPPParser
 class VariableBase : public Declaration
 {
 public:
+    using Ptr = std::shared_ptr<VariableBase>;
+    using List = std::vector<Ptr>;
+
     VariableBase() = delete;
     explicit VariableBase(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
-                      std::string type)
+                          std::string type)
         : Declaration(std::move(parent), std::move(name), accessSpecifier)
         , _type(std::move(type))
-    {
-    }
-    explicit VariableBase(Declaration::WeakPtr parent, CXCursor token)
-        : Declaration(std::move(parent), token)
-        , _type(ConvertString(clang_getTypeSpelling(clang_getCursorType(token))))
     {
     }
 
@@ -43,14 +41,13 @@ private:
 class Variable : public VariableBase
 {
 public:
+    using Ptr = std::shared_ptr<Variable>;
+    using List = std::vector<Ptr>;
+
     Variable() = delete;
     explicit Variable(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
                       std::string type)
         : VariableBase(std::move(parent), std::move(name), accessSpecifier, std::move(type))
-    {
-    }
-    explicit Variable(Declaration::WeakPtr parent, CXCursor token)
-        : VariableBase(std::move(parent), token)
     {
     }
 
@@ -76,14 +73,13 @@ public:
 class DataMember : public VariableBase
 {
 public:
+    using Ptr = std::shared_ptr<DataMember>;
+    using List = std::vector<Ptr>;
+
     DataMember() = delete;
     explicit DataMember(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
                         std::string type)
         : VariableBase(std::move(parent), std::move(name), accessSpecifier, std::move(type))
-    {
-    }
-    explicit DataMember(Declaration::WeakPtr parent, CXCursor token)
-        : VariableBase(std::move(parent), token)
     {
     }
 

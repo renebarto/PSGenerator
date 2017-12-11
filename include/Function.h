@@ -22,10 +22,6 @@ public:
         : _name(std::move(name))
         , _type(std::move(type))
     {}
-    explicit Parameter(CXCursor token)
-        : _name(ConvertString(clang_getCursorSpelling(token)))
-        , _type(ConvertString(clang_getTypeSpelling(clang_getCursorType(token))))
-    {}
     const std::string & Name() const { return _name; }
     const std::string & Type() const { return _type; }
     void Show(std::ostream & stream, int indent) const
@@ -75,33 +71,6 @@ public:
     {
         if (_flags & FunctionFlags::PureVirtual)
             _flags = static_cast<FunctionFlags>(_flags | FunctionFlags::Virtual);
-    }
-    explicit FunctionBase(Declaration::WeakPtr parent, CXCursor token)
-        : Declaration(std::move(parent), token)
-        , _type()
-        , _parameters()
-        , _flags()
-    {
-        CXType functionType = clang_getCursorType(token);
-        CXType resultType = clang_getResultType(functionType);
-        CXString resultTypeStr = clang_getTypeSpelling(resultType);
-        _type = ConvertString(resultTypeStr);
-
-        int numArguments = clang_Cursor_getNumArguments(token);
-        std::vector<Parameter> parameters;
-        for (unsigned int i = 0; i < numArguments; ++i)
-        {
-            CXCursor parameterToken = clang_Cursor_getArgument(token, i);
-            CXString parameterNameStr = clang_getCursorSpelling(parameterToken);
-            CXType parameterType = clang_getArgType(functionType, i);
-            CXString parameterTypeStr = clang_getTypeSpelling(parameterType);
-
-            _parameters.emplace_back(parameterToken);
-        }
-        _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
-        _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isVirtual(token) != 0) ? FunctionFlags::Virtual : 0));
-        _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? (FunctionFlags::PureVirtual | FunctionFlags::Virtual) : 0));
-        _flags = static_cast<FunctionFlags>(_flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
     }
     const std::string & Type() const { return _type; }
     const ParameterList & Parameters() const { return _parameters; }
@@ -180,10 +149,6 @@ public:
                    "", std::move(parameters), flags)
     {
     }
-    explicit Constructor(Declaration::WeakPtr parent, CXCursor token)
-        : FunctionBase(std::move(parent), token)
-    {
-    }
 
     virtual bool Visit(IASTVisitor & visitor) const override
     {
@@ -219,10 +184,6 @@ public:
                         FunctionFlags flags)
         : FunctionBase(std::move(parent), std::move(name), accessSpecifier,
                    "", ParameterList(), flags)
-    {
-    }
-    explicit Destructor(Declaration::WeakPtr parent, CXCursor token)
-        : FunctionBase(std::move(parent), token)
     {
     }
 
@@ -263,10 +224,6 @@ public:
                    std::move(type), std::move(parameters), flags)
     {
     }
-    explicit Method(Declaration::WeakPtr parent, CXCursor token)
-        : FunctionBase(std::move(parent), token)
-    {
-    }
 
     virtual bool Visit(IASTVisitor & visitor) const override
     {
@@ -300,10 +257,6 @@ public:
                       FunctionFlags flags)
         : FunctionBase(std::move(parent), std::move(name), AccessSpecifier::Invalid,
                        std::move(type), std::move(parameters), flags)
-    {
-    }
-    explicit Function(Declaration::WeakPtr parent, CXCursor token)
-        : FunctionBase(std::move(parent), token)
     {
     }
 

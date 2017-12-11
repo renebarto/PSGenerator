@@ -31,16 +31,6 @@ public:
           , _functions()
           , _typedefs()
     {}
-    explicit Container(Declaration::WeakPtr parent, CXCursor token)
-        : Declaration(std::move(parent), token)
-        , _contents()
-        , _namespaces()
-        , _classes()
-        , _structs()
-        , _enums()
-        , _functions()
-          , _typedefs()
-    {}
 
     const PtrList<Namespace> & Namespaces() const { return _namespaces; }
     const PtrList<Class> & Classes() const { return _classes; }

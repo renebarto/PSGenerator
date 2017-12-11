@@ -19,9 +19,6 @@ public:
     explicit Struct(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
         : Object(std::move(parent), std::move(name), accessSpecifier)
     {}
-    explicit Struct(Declaration::WeakPtr parent, CXCursor token)
-        : Object(std::move(parent), token)
-    {}
 
     virtual bool Visit(IASTVisitor & visitor) const override
     {

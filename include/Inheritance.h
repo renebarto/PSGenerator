@@ -15,25 +15,20 @@ public:
     using Ptr = std::shared_ptr<Inheritance>;
 
     Inheritance() = delete;
-    explicit Inheritance(Declaration::WeakPtr parent, Declaration::WeakPtr base, AccessSpecifier accessSpecifier,
-                         bool isVirtual)
-        : _name(std::move(base.lock()->Name()))
+    explicit Inheritance(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+                         Declaration::WeakPtr base, bool isVirtual)
+        : _name(std::move(name))
         , _parent(std::move(parent))
+        , _base(std::move(base))
         , _accessSpecifier(accessSpecifier)
         , _isVirtual(isVirtual)
-    {
-    }
-    explicit Inheritance(Declaration::WeakPtr parent, CXCursor token)
-        : _name(ConvertString(clang_getCursorSpelling(token)))
-        , _parent(std::move(parent))
-        , _accessSpecifier(ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token)))
-        , _isVirtual(clang_isVirtualBase(token) != 0)
     {
     }
 
     const std::string & Name() const { return _name; }
     std::shared_ptr<Declaration> Parent() const { return _parent.lock(); }
     AccessSpecifier Access() const { return _accessSpecifier; }
+    std::shared_ptr<Declaration> BaseType() const { return _base.lock(); }
     bool IsVirtual() const { return _isVirtual; }
 
     void Show(std::ostream & stream, int indent) const
@@ -50,6 +45,7 @@ public:
 private:
     std::string _name;
     std::weak_ptr<Declaration> _parent;
+    std::weak_ptr<Declaration> _base;
     AccessSpecifier _accessSpecifier;
     bool _isVirtual;
 };

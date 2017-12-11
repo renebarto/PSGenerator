@@ -5,6 +5,7 @@
 #include <clang-c/Index.h>
 #include "include/Utility.h"
 #include "include/Typedef.h"
+#include "include/Variable.h"
 
 using namespace std;
 using namespace Utility;
@@ -197,7 +198,8 @@ void Parser::AddNamespace(Declaration::Ptr parent, CXCursor token)
     }
     else
     {
-        object = make_shared<Namespace>(parent, token);
+        std::string name = ConvertString(clang_getCursorSpelling(token));
+        object = make_shared<Namespace>(parent, name);
     }
     UpdateStack(object);
     if (addNewObject)
@@ -219,6 +221,7 @@ void Parser::AddClass(Declaration::Ptr parent, CXCursor token)
 {
     Class::Ptr object;
     std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
     bool addNewObject = true;
     if (FindClassByName(parent, name, object))
     {
@@ -228,7 +231,7 @@ void Parser::AddClass(Declaration::Ptr parent, CXCursor token)
     }
     else
     {
-        object = make_shared<Class>(parent, token);
+        object = make_shared<Class>(parent, name, accessSpecifier);
     }
     UpdateStack(object);
     if (addNewObject)
@@ -249,6 +252,7 @@ void Parser::AddStruct(Declaration::Ptr parent, CXCursor token)
 {
     Struct::Ptr object;
     std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
     bool addNewObject = true;
     if (FindStructByName(parent, name, object))
     {
@@ -258,7 +262,7 @@ void Parser::AddStruct(Declaration::Ptr parent, CXCursor token)
     }
     else
     {
-        object = make_shared<Struct>(parent, token);
+        object = make_shared<Struct>(parent, name, accessSpecifier);
     }
     UpdateStack(object);
     if (addNewObject)
@@ -277,7 +281,17 @@ void Parser::AddStruct(Declaration::Ptr parent, CXCursor token)
 
 void Parser::AddEnum(Declaration::Ptr parent, CXCursor token)
 {
-    auto object = make_shared<Enum>(parent, token);
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    std::string underlyingType;
+    CXType type = clang_getEnumDeclIntegerType(token);
+    if (type.kind != CXType_UInt)
+    {
+        CXString strType = clang_getTypeSpelling(type);
+        underlyingType = ConvertString(strType);
+    }
+
+    auto object = make_shared<Enum>(parent, name, accessSpecifier, underlyingType);
     UpdateStack(object);
     Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
     if (parentContainer != nullptr)
@@ -307,7 +321,30 @@ void Parser::AddEnumValue(Declaration::Ptr parent, CXCursor token)
 
 void Parser::AddConstructor(Declaration::Ptr parent, CXCursor token)
 {
-    auto object = make_shared<Constructor>(parent, token);
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    CXType functionType = clang_getCursorType(token);
+
+    int numArguments = clang_Cursor_getNumArguments(token);
+    ParameterList parameters;
+    for (unsigned int i = 0; i < numArguments; ++i)
+    {
+        CXCursor parameterToken = clang_Cursor_getArgument(token, i);
+        CXString parameterNameStr = clang_getCursorSpelling(parameterToken);
+        CXType parameterTypeDecl = clang_getArgType(functionType, i);
+        CXString parameterTypeStr = clang_getTypeSpelling(parameterTypeDecl);
+        std::string parameterName = ConvertString(parameterNameStr);
+        std::string parameterType = ConvertString(parameterTypeStr);
+
+        parameters.emplace_back(parameterName, parameterType);
+    }
+    FunctionFlags flags;
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isVirtual(token) != 0) ? FunctionFlags::Virtual : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? (FunctionFlags::PureVirtual | FunctionFlags::Virtual) : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
+
+    auto object = make_shared<Constructor>(parent, name, accessSpecifier, parameters, flags);
     UpdateStack(object);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
@@ -324,7 +361,20 @@ void Parser::AddConstructor(Declaration::Ptr parent, CXCursor token)
 
 void Parser::AddDestructor(Declaration::Ptr parent, CXCursor token)
 {
-    auto object = make_shared<Destructor>(parent, token);
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    CXType functionType = clang_getCursorType(token);
+    CXType resultType = clang_getResultType(functionType);
+    CXString resultTypeStr = clang_getTypeSpelling(resultType);
+    std::string type = ConvertString(resultTypeStr);
+
+    FunctionFlags flags;
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isVirtual(token) != 0) ? FunctionFlags::Virtual : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? (FunctionFlags::PureVirtual | FunctionFlags::Virtual) : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
+
+    auto object = make_shared<Destructor>(parent, name, accessSpecifier, flags);
     UpdateStack(object);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
@@ -341,7 +391,33 @@ void Parser::AddDestructor(Declaration::Ptr parent, CXCursor token)
 
 void Parser::AddMethod(Declaration::Ptr parent, CXCursor token)
 {
-    auto object = make_shared<Method>(parent, token);
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    CXType functionType = clang_getCursorType(token);
+    CXType resultType = clang_getResultType(functionType);
+    CXString resultTypeStr = clang_getTypeSpelling(resultType);
+    std::string type = ConvertString(resultTypeStr);
+
+    int numArguments = clang_Cursor_getNumArguments(token);
+    ParameterList parameters;
+    for (unsigned int i = 0; i < numArguments; ++i)
+    {
+        CXCursor parameterToken = clang_Cursor_getArgument(token, i);
+        CXString parameterNameStr = clang_getCursorSpelling(parameterToken);
+        CXType parameterTypeDecl = clang_getArgType(functionType, i);
+        CXString parameterTypeStr = clang_getTypeSpelling(parameterTypeDecl);
+        std::string parameterName = ConvertString(parameterNameStr);
+        std::string parameterType = ConvertString(parameterTypeStr);
+
+        parameters.emplace_back(parameterName, parameterType);
+    }
+    FunctionFlags flags;
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isVirtual(token) != 0) ? FunctionFlags::Virtual : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? (FunctionFlags::PureVirtual | FunctionFlags::Virtual) : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
+
+    auto object = make_shared<Method>(parent, name, accessSpecifier, type, parameters, flags);
     UpdateStack(object);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
@@ -358,20 +434,24 @@ void Parser::AddMethod(Declaration::Ptr parent, CXCursor token)
 
 void Parser::AddBaseClass(Declaration::Ptr parent, CXCursor token)
 {
-    CXType type = clang_getCursorType(token);
-    CXType type2 = clang_getCanonicalType(type);
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    bool isVirtual = (clang_isVirtualBase(token) != 0);
 
-    auto it = _typeLookupMap.find(type2);
+    CXType typeDecl = clang_getCursorType(token);
+    CXType baseTypeDecl = clang_getCanonicalType(typeDecl);
+
+    auto it = _typeLookupMap.find(baseTypeDecl);
     Declaration::Ptr baseType = nullptr;
     if (it != _typeLookupMap.end())
         baseType = it->second;
     else
     {
-        std::string strType = ConvertString(clang_getTypeSpelling(type2));
+        std::string strType = ConvertString(clang_getTypeSpelling(typeDecl));
         cerr << "Undefined base type: " <<  strType << endl;
         return;
     }
-    auto inheritance = make_shared<Inheritance>(baseType, token);
+    auto inheritance = make_shared<Inheritance>(parent, name, accessSpecifier, baseType, isVirtual);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(parent);
     if (parentObject != nullptr)
     {
@@ -386,7 +466,95 @@ void Parser::AddBaseClass(Declaration::Ptr parent, CXCursor token)
 
 void Parser::AddTypedef(Declaration::Ptr parent, CXCursor token)
 {
-    auto object = make_shared<Typedef>(parent, token);
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    std::string type = ConvertString(clang_getTypeSpelling(clang_getTypedefDeclUnderlyingType(token)));
+
+    auto object = make_shared<Typedef>(parent, name, accessSpecifier, type);
+    UpdateStack(object);
+    Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
+    if (parentObject != nullptr)
+    {
+        parentObject->Add(object);
+    }
+    else
+    {
+        // Regular type in global namespace
+        _ast.Add(object);
+    }
+    AddToMap(token, object);
+}
+
+void Parser::AddVariable(Declaration::Ptr parent, CXCursor token)
+{
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    std::string type = ConvertString(clang_getTypeSpelling(clang_getCursorType(token)));
+
+    auto object = make_shared<Variable>(parent, name, accessSpecifier, type);
+    UpdateStack(object);
+    Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
+    if (parentObject != nullptr)
+    {
+        parentObject->Add(object);
+    }
+    else
+    {
+        // Regular type in global namespace
+        _ast.Add(object);
+    }
+    AddToMap(token, object);
+}
+
+void Parser::AddDataMember(Declaration::Ptr parent, CXCursor token)
+{
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    std::string type = ConvertString(clang_getTypeSpelling(clang_getCursorType(token)));
+
+    auto object = make_shared<DataMember>(parent, name, accessSpecifier, type);
+    UpdateStack(object);
+    Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
+    if (parentObject != nullptr)
+    {
+        parentObject->Add(object);
+    }
+    else
+    {
+        // Regular type in global namespace
+        _ast.Add(object);
+    }
+    AddToMap(token, object);
+}
+
+void Parser::AddFunction(Declaration::Ptr parent, CXCursor token)
+{
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    CXType functionType = clang_getCursorType(token);
+    CXType resultType = clang_getResultType(functionType);
+    CXString resultTypeStr = clang_getTypeSpelling(resultType);
+    std::string type = ConvertString(resultTypeStr);
+
+    int numArguments = clang_Cursor_getNumArguments(token);
+    ParameterList parameters;
+    for (unsigned int i = 0; i < numArguments; ++i)
+    {
+        CXCursor parameterToken = clang_Cursor_getArgument(token, i);
+        CXString parameterNameStr = clang_getCursorSpelling(parameterToken);
+        CXType parameterTypeDecl = clang_getArgType(functionType, i);
+        CXString parameterTypeStr = clang_getTypeSpelling(parameterTypeDecl);
+        std::string parameterName = ConvertString(parameterNameStr);
+        std::string parameterType = ConvertString(parameterTypeStr);
+
+        parameters.emplace_back(parameterName, parameterType);
+    }
+    FunctionFlags flags;
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isVirtual(token) != 0) ? FunctionFlags::Virtual : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isPureVirtual(token) != 0) ? (FunctionFlags::PureVirtual | FunctionFlags::Virtual) : 0));
+    flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
+
+    auto object = make_shared<Function>(parent, name, type, parameters, flags);
     UpdateStack(object);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)

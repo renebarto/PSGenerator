@@ -63,12 +63,6 @@ public:
         , _accessSpecifier(accessSpecifier)
     {
     }
-    explicit Declaration(WeakPtr parent, CXCursor token)
-        : _name(ConvertString(clang_getCursorSpelling(token)))
-        , _parent(std::move(parent))
-        , _accessSpecifier(ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token)))
-    {
-    }
     virtual ~Declaration() = default;
 
     const std::string & Name() const { return _name; }

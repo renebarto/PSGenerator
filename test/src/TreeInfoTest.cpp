@@ -259,7 +259,7 @@ TEST_FIXTURE(TreeInfoTest, StructInheritance)
     aStructB->Add(make_shared<Constructor>(aStructB, "B", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
     aStructB->Add(make_shared<Destructor>(aStructB, "~B", AccessSpecifier::Public, FunctionFlags::Virtual));
     aStructB->Add(make_shared<Method>(aStructB, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags(FunctionFlags::Virtual | FunctionFlags::Override)));
-    aStructB->AddBase(make_shared<Inheritance>(aStructB, aStructA, AccessSpecifier::Public, false));
+    aStructB->AddBase(make_shared<Inheritance>(aStructB, "A", AccessSpecifier::Public, aStructA, false));
     ast.Add(aStructB);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -311,7 +311,7 @@ TEST_FIXTURE(TreeInfoTest, SingleEnum)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
+    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "A", AccessSpecifier::Public, "");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -335,7 +335,7 @@ TEST_FIXTURE(TreeInfoTest, SingleEnumAnonymous)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "", AccessSpecifier::Public);
+    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "", AccessSpecifier::Public, "");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 

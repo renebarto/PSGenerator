@@ -123,6 +123,9 @@ private:
     void AddMethod(Declaration::Ptr parent, CXCursor token);
     void AddBaseClass(Declaration::Ptr parent, CXCursor token);
     void AddTypedef(Declaration::Ptr parent, CXCursor token);
+    void AddVariable(Declaration::Ptr parent, CXCursor token);
+    void AddDataMember(Declaration::Ptr parent, CXCursor token);
+    void AddFunction(Declaration::Ptr parent, CXCursor token);
 
     void UpdateStack(Declaration::Ptr object);
     void ShowStack();

@@ -14,7 +14,7 @@ class AST : public Container
 {
 public:
     AST()
-        : Container(WeakPtr(), CXCursor())
+        : Container(WeakPtr(), "AST", AccessSpecifier::Invalid)
     {}
     virtual bool IsValid() const override { return false; }
     virtual void Show(std::ostream & stream, int indent) const override

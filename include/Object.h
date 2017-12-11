@@ -24,14 +24,6 @@ public:
           , _baseTypes()
     {
     }
-    explicit Object(Declaration::WeakPtr parent, CXCursor token)
-        : Container(parent, token)
-        , _constructors()
-        , _destructors()
-        , _methods()
-        , _baseTypes()
-    {
-    }
 
     const PtrList<Constructor> & Constructors() const { return _constructors; }
     const PtrList<Destructor> & Destructors() const { return _destructors; }

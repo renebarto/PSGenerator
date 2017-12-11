@@ -53,21 +53,10 @@ public:
 
     Enum() = delete;
     explicit Enum(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
-                  std::string type = "")
+                  std::string type)
         : Declaration(std::move(parent), std::move(name), accessSpecifier)
         , _type(std::move(type))
     {}
-    explicit Enum(Declaration::WeakPtr parent, CXCursor token)
-        : Declaration(std::move(parent), token)
-        , _type()
-    {
-        CXType type = clang_getEnumDeclIntegerType(token);
-        if (type.kind != CXType_UInt)
-        {
-            CXString strType = clang_getTypeSpelling(type);
-            _type = ConvertString(strType);
-        }
-    }
 
     const std::string & Type() const { return _type; }
     const EnumConstantList & Values() const { return _values; }

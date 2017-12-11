@@ -20,9 +20,6 @@ public:
     explicit Namespace(Declaration::WeakPtr parent, std::string name)
         : Container(std::move(parent), std::move(name), AccessSpecifier::Invalid)
     {}
-    explicit Namespace(Declaration::WeakPtr parent, CXCursor token)
-        : Container(std::move(parent), token)
-    {}
 
     virtual bool Visit(IASTVisitor & visitor) const override
     {
