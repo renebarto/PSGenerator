@@ -9,32 +9,6 @@ using namespace Utility;
 namespace CPPParser
 {
 
-void Object::ShowContents(std::ostream & stream, int indent) const
-{
-    Container::ShowContents(stream, indent);
-    for (auto const & aBaseType : _baseTypes)
-    {
-        aBaseType->Show(stream, indent + 1);
-    }
-    for (auto const & aConstructor : _constructors)
-    {
-        aConstructor->Show(stream, indent + 1);
-    }
-    for (auto const & aDestructor : _destructors)
-    {
-        aDestructor->Show(stream, indent + 1);
-    }
-    for (auto const & aMethod : _methods)
-    {
-        aMethod->Show(stream, indent + 1);
-    }
-}
-
-void Object::GenerateCodeContents(std::ostream & stream, int indent) const
-{
-    Container::GenerateCodeContents(stream, indent + 1);
-}
-
 void Object::Add(const Declaration::Ptr & value)
 {
     Container::Add(value);
@@ -76,6 +50,11 @@ void Object::AddMethod(const Method::Ptr & value)
 void Object::AddBase(const Inheritance::Ptr & value)
 {
     _baseTypes.push_back(value);
+}
+
+void Object::SetAccessSpecifier(AccessSpecifier accessSpecifier)
+{
+    _currentAccessSpecifier = accessSpecifier;
 }
 
 } // namespace CPPParser

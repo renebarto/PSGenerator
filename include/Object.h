@@ -16,12 +16,14 @@ public:
     using List = std::vector<Ptr>;
 
     Object() = delete;
-    explicit Object(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
+    explicit Object(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+                    AccessSpecifier defaultInternalAccessSpecifier)
         : Container(std::move(parent), std::move(name), accessSpecifier)
           , _constructors()
           , _destructors()
           , _methods()
           , _baseTypes()
+          , _currentAccessSpecifier(defaultInternalAccessSpecifier)
     {
     }
 
@@ -39,19 +41,16 @@ public:
         return ok;
     }
 
-    virtual void Show(std::ostream & stream, int indent) const = 0;
-    virtual void GenerateCode(std::ostream & stream, int indent) const = 0;
-    void ShowContents(std::ostream & stream, int indent) const override;
-    void GenerateCodeContents(std::ostream & stream, int indent) const override;
-
     virtual void Add(const Declaration::Ptr & value) override;
     void AddBase(const Inheritance::Ptr & value);
+    void SetAccessSpecifier(AccessSpecifier accessSpecifier);
 
 private:
     std::vector<Constructor::Ptr> _constructors;
     std::vector<Destructor::Ptr> _destructors;
     std::vector<Method::Ptr> _methods;
     std::vector<Inheritance::Ptr> _baseTypes;
+    AccessSpecifier _currentAccessSpecifier;
 
     void AddConstructor(const Constructor::Ptr & value);
     void AddDestructor(const Destructor::Ptr & value);

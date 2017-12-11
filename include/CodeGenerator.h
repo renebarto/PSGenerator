@@ -13,20 +13,9 @@
 #include <include/Namespace.h>
 
 using namespace std;
-//using namespace Utility;
 
 namespace CPPParser
 {
-
-inline void TRACE(const std::string & function, const std::string & text)
-{
-    cerr << function << "(" << text << ")" << endl;
-}
-
-inline void TRACE2(const std::string & function, const std::string & text, const std::string & name)
-{
-    cerr << function << "(" << text << ") : " << name << endl;
-}
 
 class CodeGenerator : public IASTVisitor
 {
@@ -191,6 +180,64 @@ public:
     {
         TRACE2(__func__, "Function", element.Name());
         return LeaveFunctionBase(element);
+    }
+
+    virtual bool Enter(const FunctionTemplate & element) override
+    {
+        TRACE2(__func__, "FunctionTemplate", element.Name());
+        _stream << Indent(_indent);
+        _stream << "template<";
+        bool firstTemplateParameter = true;
+        for (auto const & parameter : element.TemplateParameters())
+        {
+            if (!firstTemplateParameter)
+            {
+                _stream << ", ";
+            }
+            _stream << "class " << parameter;
+            firstTemplateParameter = false;
+        }
+
+        _stream << "> ";
+        if (element.IsInline())
+            _stream << "inline ";
+        if (element.IsStatic())
+            _stream << "static ";
+        if (element.IsVirtual())
+            _stream << "virtual ";
+        if (!element.Type().empty())
+            _stream << element.Type() << " ";
+        _stream << element.Name() << "(";
+        bool firstParameter = true;
+        for (auto const & parameter : element.Parameters())
+        {
+            if (!firstParameter)
+            {
+                _stream << ", ";
+            }
+            _stream << parameter.Type() << " " << parameter.Name();
+            firstParameter = false;
+        }
+        _stream << ")";
+        if (element.IsConst())
+            _stream << " const";
+        if (element.IsOverride())
+            _stream << " override";
+        if (element.IsFinal())
+            _stream << " override";
+        if (element.IsPureVirtual())
+            _stream << " = 0";
+        if (element.IsDefault())
+            _stream << " = default";
+        if (element.IsDeleted())
+            _stream << " = delete";
+        _stream << ";" << std::endl;
+        return true;
+    }
+    virtual bool Leave(const FunctionTemplate & element) override
+    {
+        TRACE2(__func__, "FunctionTemplate", element.Name());
+        return true;
     }
 
     virtual bool Enter(const Variable & element) override

@@ -95,6 +95,7 @@ public:
 
     void Show(std::ostream & stream);
 
+    void PrintToken(CXCursor token, CXCursor parentToken);
     void HandleToken(CXCursor token, CXCursor parentToken);
 
 private:
@@ -126,6 +127,10 @@ private:
     void AddVariable(Declaration::Ptr parent, CXCursor token);
     void AddDataMember(Declaration::Ptr parent, CXCursor token);
     void AddFunction(Declaration::Ptr parent, CXCursor token);
+    void AddFunctionTemplate(Declaration::Ptr parent, CXCursor token);
+    void AddTemplateTypeParameter(Declaration::Ptr parent, CXCursor token);
+    void AddAccessSpecifier(Declaration::Ptr parent, CXCursor token);
+    void AddInclude(Declaration::Ptr parent, CXCursor token);
 
     void UpdateStack(Declaration::Ptr object);
     void ShowStack();

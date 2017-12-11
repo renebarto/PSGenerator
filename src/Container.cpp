@@ -7,42 +7,13 @@
 #include "include/Struct.h"
 #include "include/Enum.h"
 #include "include/Typedef.h"
+#include "include/Variable.h"
 
 using namespace std;
 using namespace Utility;
 
 namespace CPPParser
 {
-
-void Container::ShowContents(std::ostream & stream, int indent) const
-{
-    for (auto const & aNamespace : _namespaces)
-    {
-        aNamespace->Show(stream, indent);
-    }
-    for (auto const & aClass : _classes)
-    {
-        aClass->Show(stream, indent);
-    }
-    for (auto const & aStruct : _structs)
-    {
-        aStruct->Show(stream, indent);
-    }
-    for (auto const & aEnum : _enums)
-    {
-        aEnum->Show(stream, indent);
-    }
-    for (auto const & aFunction : _functions)
-    {
-        aFunction->Show(stream, indent);
-    }
-}
-
-void Container::GenerateCodeContents(std::ostream & stream, int indent) const
-{
-    for (auto const & item : _contents)
-        item->GenerateCode(stream, indent);
-}
 
 void Container::Add(const std::shared_ptr<Declaration> & value)
 {
@@ -83,6 +54,18 @@ void Container::Add(const std::shared_ptr<Declaration> & value)
         AddTypedef(aTypedef);
         return;
     }
+    Variable::Ptr aVariable = dynamic_pointer_cast<Variable>(value);
+    if (aVariable != nullptr)
+    {
+        AddVariable(aVariable);
+        return;
+    }
+    FunctionTemplate::Ptr aFunctionTemplate = dynamic_pointer_cast<FunctionTemplate>(value);
+    if (aFunctionTemplate != nullptr)
+    {
+        AddFunctionTemplate(aFunctionTemplate);
+        return;
+    }
 }
 
 void Container::AddNamespace(const Namespace::Ptr & value)
@@ -113,6 +96,16 @@ void Container::AddFunction(const std::shared_ptr<Function> & value)
 void Container::AddTypedef(const std::shared_ptr<Typedef> & value)
 {
     _typedefs.push_back(value);
+}
+
+void Container::AddVariable(const std::shared_ptr<Variable> & value)
+{
+    _variables.push_back(value);
+}
+
+void Container::AddFunctionTemplate(const std::shared_ptr<FunctionTemplate> & value)
+{
+    _functionTemplates.push_back(value);
 }
 
 template<class T>
@@ -157,6 +150,11 @@ bool Container::FindFunction(const std::string & name, std::shared_ptr<Function>
 bool Container::FindTypedef(const std::string & name, std::shared_ptr<Typedef> & result)
 {
     return FindElement(_typedefs, name, result);
+}
+
+bool Container::FindFunctionTemplate(const std::string & name, std::shared_ptr<FunctionTemplate> & result)
+{
+    return FindElement(_functionTemplates, name, result);
 }
 
 } // namespace CPPParser

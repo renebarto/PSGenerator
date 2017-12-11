@@ -23,13 +23,15 @@ public:
     Container() = delete;
     explicit Container(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
         : Declaration(std::move(parent), std::move(name), accessSpecifier)
-          , _contents()
-          , _namespaces()
-          , _classes()
-          , _structs()
-          , _enums()
-          , _functions()
-          , _typedefs()
+        , _contents()
+        , _namespaces()
+        , _classes()
+        , _structs()
+        , _enums()
+        , _functions()
+        , _typedefs()
+        , _variables()
+        , _functionTemplates()
     {}
 
     const PtrList<Namespace> & Namespaces() const { return _namespaces; }
@@ -38,11 +40,8 @@ public:
     const PtrList<Enum> & Enums() const { return _enums; }
     const PtrList<Function> & Functions() const { return _functions; }
     const PtrList<Typedef> & Typedefs() const { return _typedefs; }
-
-    virtual void Show(std::ostream & stream, int indent) const override = 0;
-    virtual void GenerateCode(std::ostream & stream, int indent) const override = 0;
-    virtual void ShowContents(std::ostream & stream, int indent) const;
-    virtual void GenerateCodeContents(std::ostream & stream, int indent) const;
+    const PtrList<Variable> & Variables() const { return _variables; }
+    const PtrList<FunctionTemplate> & FunctionTemplates() const { return _functionTemplates; }
 
     virtual void Add(const std::shared_ptr<Declaration> & value);
 
@@ -52,6 +51,8 @@ public:
     bool FindEnum(const std::string & name, std::shared_ptr<Enum> & result);
     bool FindFunction(const std::string & name, std::shared_ptr<Function> & result);
     bool FindTypedef(const std::string & name, std::shared_ptr<Typedef> & result);
+    bool FindVariable(const std::string & name, std::shared_ptr<Typedef> & result);
+    bool FindFunctionTemplate(const std::string & name, std::shared_ptr<FunctionTemplate> & result);
 
     bool VisitChildren(IASTVisitor & visitor) const
     {
@@ -72,6 +73,8 @@ protected:
     PtrList<Enum> _enums;
     PtrList<Function> _functions;
     PtrList<Typedef> _typedefs;
+    PtrList<Variable> _variables;
+    PtrList<FunctionTemplate> _functionTemplates;
 
 private:
     void AddNamespace(const std::shared_ptr<Namespace> & value);
@@ -80,6 +83,8 @@ private:
     void AddEnum(const std::shared_ptr<Enum> & value);
     void AddFunction(const std::shared_ptr<Function> & value);
     void AddTypedef(const std::shared_ptr<Typedef> & value);
+    void AddVariable(const std::shared_ptr<Variable> & value);
+    void AddFunctionTemplate(const std::shared_ptr<FunctionTemplate> & value);
 };
 
 } // namespace CPPParser

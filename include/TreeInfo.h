@@ -12,20 +12,9 @@
 #include <include/Namespace.h>
 
 using namespace std;
-//using namespace Utility;
 
 namespace CPPParser
 {
-
-inline void TRACE(const std::string & function, const std::string & text)
-{
-    cerr << function << "(" << text << ")" << endl;
-}
-
-inline void TRACE2(const std::string & function, const std::string & text, const std::string & name)
-{
-    cerr << function << "(" << text << ") : " << name << endl;
-}
 
 class TreeInfo : public IASTVisitor
 {
@@ -212,6 +201,21 @@ public:
     {
         --_indent;
         _stream << Indent(_indent) << "Function end ";
+        LeaveFunctionBase(element);
+        return true;
+    }
+
+    virtual bool Enter(const FunctionTemplate & element) override
+    {
+        _stream << Indent(_indent) << "FunctionTemplate ";
+        EnterFunctionBase(element);
+        ++_indent;
+        return true;
+    }
+    virtual bool Leave(const FunctionTemplate & element) override
+    {
+        --_indent;
+        _stream << Indent(_indent) << "FunctionTemplate end ";
         LeaveFunctionBase(element);
         return true;
     }

@@ -24,14 +24,6 @@ public:
     {}
     const std::string & Name() const { return _name; }
     const std::string & Type() const { return _type; }
-    void Show(std::ostream & stream, int indent) const
-    {
-        stream << Indent(indent) << _name << ": " << _type << std::endl;
-    }
-    void GenerateCode(std::ostream & stream, int indent) const
-    {
-        stream << _type << " " << _name;
-    }
 
 private:
     std::string _name;
@@ -85,49 +77,6 @@ public:
     bool IsInline() const { return (_flags & FunctionFlags::Inline) != 0; }
 
     virtual bool Visit(IASTVisitor & visitor) const = 0;
-    void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << Name() << ": " << _type << std::endl;
-        ShowContents(stream, indent);
-    }
-    void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent);
-        if (IsStatic())
-            stream << "static ";
-        if (IsVirtual())
-            stream << "virtual ";
-        stream << Type() << " " << Name() << "(";
-        GenerateCodeContents(stream, indent);
-        stream << ")";
-        if (IsConst())
-            stream << " const";
-        if (IsOverride())
-            stream << " override";
-        if (IsFinal())
-            stream << " override";
-        if (IsPureVirtual())
-            stream << " = 0";
-        stream << ";" << std::endl;
-    }
-    virtual void ShowContents(std::ostream & stream, int indent) const
-    {
-        for (auto const & parameter : _parameters)
-            parameter.Show(stream, indent + 1);
-    }
-    virtual void GenerateCodeContents(std::ostream & stream, int indent) const
-    {
-        bool firstParameter = true;
-        for (auto const & parameter : _parameters)
-        {
-            if (!firstParameter)
-            {
-                stream << ", ";
-            }
-            parameter.GenerateCode(stream, indent + 1);
-            firstParameter = false;
-        }
-    }
 
 private:
     std::string _type;
@@ -159,18 +108,6 @@ public:
             ok = false;
         return ok;
     }
-    void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Constructor " << Name() << ": " << Type() << std::endl;
-        ShowContents(stream, indent);
-    }
-    void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent);
-        stream << Name() << "(";
-        GenerateCodeContents(stream, indent);
-        stream << ");" << std::endl;
-    }
 };
 
 class Destructor : public FunctionBase
@@ -195,18 +132,6 @@ public:
         if (!visitor.Leave(*this))
             ok = false;
         return ok;
-    }
-    void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Destructor " << Name() << ": " << Type() << std::endl;
-        ShowContents(stream, indent);
-    }
-    void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent);
-        if (IsVirtual())
-            stream << "virtual ";
-        stream << Name() << "();" << std::endl;
     }
 };
 
@@ -234,15 +159,6 @@ public:
             ok = false;
         return ok;
     }
-    void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Method " << Name() << ": " << Type() << std::endl;
-        ShowContents(stream, indent);
-    }
-    void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        FunctionBase::GenerateCode(stream, indent);
-    }
 };
 
 class Function : public FunctionBase
@@ -269,15 +185,42 @@ public:
             ok = false;
         return ok;
     }
-    void Show(std::ostream & stream, int indent) const override
+};
+
+class FunctionTemplate : public FunctionBase
+{
+public:
+    using Ptr = std::shared_ptr<FunctionTemplate>;
+    using List = std::vector<Ptr>;
+
+    FunctionTemplate() = delete;
+    explicit FunctionTemplate(Declaration::WeakPtr parent, std::string name,
+                      std::string type, ParameterList parameters,
+                      FunctionFlags flags)
+        : FunctionBase(std::move(parent), std::move(name), AccessSpecifier::Invalid,
+                       std::move(type), std::move(parameters), flags)
+        , _templateParameters()
     {
-        stream << Indent(indent) << "Method " << Name() << ": " << Type() << std::endl;
-        ShowContents(stream, indent);
     }
-    void GenerateCode(std::ostream & stream, int indent) const override
+
+    const std::vector<std::string> & TemplateParameters() const { return _templateParameters; }
+    virtual bool Visit(IASTVisitor & visitor) const override
     {
-        Function::GenerateCode(stream, indent);
+        bool ok = true;
+        if (!visitor.Enter(*this))
+            ok = false;
+        if (!visitor.Leave(*this))
+            ok = false;
+        return ok;
     }
+
+    void AddTemplateParameter(std::string name)
+    {
+        _templateParameters.push_back(std::move(name));
+    }
+
+private:
+    std::vector<std::string> _templateParameters;
 };
 
 } // namespace CPPParser

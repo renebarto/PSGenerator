@@ -32,18 +32,6 @@ public:
             ok = false;
         return ok;
     }
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Namespace " << Name() << " {" << std::endl;
-        ShowContents(stream, indent + 1);
-        stream << Indent(indent) << "}" << std::endl;
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "namespace " << (Name().empty() ? "" : Name() + " ") << "{" << std::endl;
-        GenerateCodeContents(stream, indent + 1);
-        stream << Indent(indent) << "} // namespace " << (Name().empty() ? "<anonymous>" : Name()) << std::endl;
-    }
 };
 
 } // namespace CPPParser

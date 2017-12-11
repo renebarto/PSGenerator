@@ -20,10 +20,10 @@ public:
     {}
     virtual ~s()
     {}
-    interface * X() const { return _interface; }
+    const interface * X() const { return _interface; }
 
 private:
-    interface * _interface;
+    const interface * _interface;
 };
 
 } // namespace NS2

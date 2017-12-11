@@ -71,8 +71,6 @@ public:
 
     virtual bool Visit(IASTVisitor & visitor) const = 0;
     virtual bool IsValid() const { return false; }
-    virtual void Show(std::ostream & stream, int indent) const = 0;
-    virtual void GenerateCode(std::ostream & stream, int indent) const = 0;
 
 private:
     std::string _name;

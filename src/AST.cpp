@@ -2,9 +2,11 @@
 
 #include <fstream>
 #include <iomanip>
+#include <include/TreeInfo.h>
 #include "include/Utility.h"
 #include "include/AST.h"
-#include <include/Namespace.h>
+#include "include/Namespace.h"
+#include "include/CodeGenerator.h"
 
 using namespace std;
 using namespace Utility;
@@ -35,6 +37,18 @@ bool AST::Visit(IASTVisitor & visitor) const
     if (!visitor.Leave(*this))
         ok = false;
     return ok;
+}
+
+void AST::Show(std::ostream & stream, int indent) const
+{
+    TreeInfo treeInfo(stream);
+    Visit(treeInfo);
+}
+
+void AST::GenerateCode(std::ostream & stream, int indent) const
+{
+    CodeGenerator codeGenerator(stream);
+    Visit(codeGenerator);
 }
 
 } // namespace CPPParser

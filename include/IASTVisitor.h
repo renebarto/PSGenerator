@@ -12,6 +12,7 @@ class Constructor;
 class Destructor;
 class Method;
 class Function;
+class FunctionTemplate;
 class Variable;
 class DataMember;
 class Inheritance;
@@ -47,6 +48,9 @@ public:
 
     virtual bool Enter(const Function &) = 0;
     virtual bool Leave(const Function &) = 0;
+
+    virtual bool Enter(const FunctionTemplate &) = 0;
+    virtual bool Leave(const FunctionTemplate &) = 0;
 
     virtual bool Enter(const Variable &) = 0;
     virtual bool Leave(const Variable &) = 0;

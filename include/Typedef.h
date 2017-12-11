@@ -34,14 +34,6 @@ public:
             ok = false;
         return ok;
     }
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Typedef " << Name() << " : " << Type() << std::endl;
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "typedef " << Name() << " " << Type() << ";" << std::endl;
-    }
 
 private:
     std::string _type;

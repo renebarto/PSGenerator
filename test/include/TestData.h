@@ -27,12 +27,14 @@ inline std::string TestRoot()
 inline std::string EmptyHeader() { return CombinePath(TestRoot(), "Empty.h"); }
 inline std::string SingleNamespaceHeader() { return CombinePath(TestRoot(), "SingleNamespace.h"); }
 inline std::string NestedNamespaceHeader() { return CombinePath(TestRoot(), "NestedNamespace.h"); }
+inline std::string NamespaceWithVarsAndFunctionsHeader() { return CombinePath(TestRoot(), "NamespaceWithVarsAndFunctions.h"); }
 inline std::string AnonymousNamespaceHeader() { return CombinePath(TestRoot(), "AnonymousNamespace.h"); }
 inline std::string ClassHeader() { return CombinePath(TestRoot(), "Class.h"); }
 inline std::string StructHeader() { return CombinePath(TestRoot(), "Struct.h"); }
 inline std::string EnumHeader() { return CombinePath(TestRoot(), "Enum.h"); }
 inline std::string EnumAnonymousHeader() { return CombinePath(TestRoot(), "EnumAnonymous.h"); }
 inline std::string InheritanceHeader() { return CombinePath(TestRoot(), "Inheritance.h"); }
+inline std::string TemplateHeader() { return CombinePath(TestRoot(), "Template.h"); }
 inline std::string IMemoryHeader() { return CombinePath(TestRoot(), "IMemory.hpp"); }
 inline std::string IPluginHeader() { return CombinePath(TestRoot(), "IPlugin.h"); }
 

@@ -25,15 +25,6 @@ public:
 
     const std::string & Type() const { return _type; }
 
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Typedef " << Name() << " : " << Type() << std::endl;
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "typedef " << Name() << " " << Type() << ";" << std::endl;
-    }
-
 private:
     std::string _type;
 };
@@ -60,14 +51,6 @@ public:
             ok = false;
         return ok;
     }
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Typedef " << Name() << " : " << Type() << std::endl;
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "typedef " << Name() << " " << Type() << ";" << std::endl;
-    }
 };
 
 class DataMember : public VariableBase
@@ -91,14 +74,6 @@ public:
         if (!visitor.Leave(*this))
             ok = false;
         return ok;
-    }
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "DataMember " << Name() << " : " << Type() << std::endl;
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << Type() << " " << Name() << ";" << std::endl;
     }
 };
 

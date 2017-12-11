@@ -77,36 +77,6 @@ public:
             ok = false;
         return ok;
     }
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Enum " << (Name().empty() ? "anonymous" : Name());
-        if (_type.empty())
-        {
-            stream << ": <default base> = ";
-        } else
-        {
-            stream << ": " << _type;
-        }
-        stream << std::endl;
-        for (auto const & value : _values)
-        {
-            value.Show(stream, indent + 1);
-        }
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "enum " << (Name().empty() ? "" : Name() + " ");
-        if (!_type.empty())
-        {
-            stream << ": " << _type << " ";
-        }
-        stream << "{" << std::endl;
-        for (auto const & value : _values)
-        {
-            value.GenerateCode(stream, indent + 1);
-        }
-        stream << Indent(indent) << "}; // enum " << (Name().empty() ? "<anonymous>" : Name()) << std::endl;
-    }
 
     void AddValue(const std::string & name,long long value)
     {

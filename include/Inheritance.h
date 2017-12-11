@@ -31,17 +31,6 @@ public:
     std::shared_ptr<Declaration> BaseType() const { return _base.lock(); }
     bool IsVirtual() const { return _isVirtual; }
 
-    void Show(std::ostream & stream, int indent) const
-    {
-        stream << Indent(indent) << "Inheritance " << Name() << std::endl;;
-    }
-    void GenerateCode(std::ostream & stream, int indent) const
-    {
-        if (IsVirtual())
-            stream << "virtual ";
-        stream << Access() << " " << Name();
-    }
-
 private:
     std::string _name;
     std::weak_ptr<Declaration> _parent;

@@ -17,7 +17,7 @@ public:
 
     Struct() = delete;
     explicit Struct(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
-        : Object(std::move(parent), std::move(name), accessSpecifier)
+        : Object(std::move(parent), std::move(name), accessSpecifier, AccessSpecifier::Public)
     {}
 
     virtual bool Visit(IASTVisitor & visitor) const override
@@ -30,34 +30,6 @@ public:
         if (!visitor.Leave(*this))
             ok = false;
         return ok;
-    }
-    virtual void Show(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "Struct " << Name() << " {" << std::endl;
-        ShowContents(stream, indent + 1);
-        stream << Indent(indent) << "}" << std::endl;
-    }
-    virtual void GenerateCode(std::ostream & stream, int indent) const override
-    {
-        stream << Indent(indent) << "struct " << Name();
-        auto baseTypes = BaseTypes();
-        if (!baseTypes.empty())
-        {
-            bool firstBase = true;
-            for (size_t index = 0; index < baseTypes.size(); ++index)
-            {
-                if (firstBase)
-                    stream << " : ";
-                else
-                    stream << ", ";
-
-                baseTypes[index]->GenerateCode(stream, indent);
-                firstBase = false;
-            }
-        }
-        stream << " {" << std::endl;
-        GenerateCodeContents(stream, indent);
-        stream << Indent(indent) << "}; // struct " << Name() << std::endl;
     }
 };
 

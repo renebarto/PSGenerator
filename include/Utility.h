@@ -1,9 +1,20 @@
 #pragma once
 
 #include <cstring>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <clang-c/Index.h>
+
+inline void TRACE(const std::string & function, const std::string & text)
+{
+    std::cerr << function << "(" << text << ")" << std::endl;
+}
+
+inline void TRACE2(const std::string & function, const std::string & text, const std::string & name)
+{
+    std::cerr << function << "(" << text << ") : " << name << std::endl;
+}
 
 inline bool operator ==(const CXCursor lhs, const CXCursor rhs)
 {

@@ -74,6 +74,7 @@ public:
         , _destructor()
         , _method()
         , _function()
+        , _functionTemplate()
         , _variable()
         , _dataMember()
         , _class()
@@ -186,6 +187,19 @@ public:
         return true;
     }
 
+    virtual bool Enter(const FunctionTemplate & element) override
+    {
+        TRACE2("FunctionTemplate", element.Name());
+        _functionTemplate.Enter(element.Name());
+        return true;
+    }
+    virtual bool Leave(const FunctionTemplate & element) override
+    {
+        TRACE2("FunctionTemplate", element.Name());
+        _functionTemplate.Leave();
+        return true;
+    }
+
     virtual bool Enter(const Variable & element) override
     {
         TRACE2("Variable", element.Name());
@@ -260,6 +274,7 @@ public:
     EnterLeaveInfo _destructor;
     EnterLeaveInfo _method;
     EnterLeaveInfo _function;
+    EnterLeaveInfo _functionTemplate;
     EnterLeaveInfo _variable;
     EnterLeaveInfo _dataMember;
     EnterLeaveInfo _class;
