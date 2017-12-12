@@ -47,8 +47,6 @@ Parser::Parser(const std::string & path)
 
 bool Parser::Parse(const OptionsList & options)
 {
-    fstream stream(_path);
-
     std::string directory;
     std::string extension;
     Utility::SplitPath(_path, directory, _fileName, extension);
@@ -157,7 +155,7 @@ void Parser::HandleToken(CXCursor token, CXCursor parentToken)
         case CXCursorKind::CXCursor_NonTypeTemplateParameter: break;
         case CXCursorKind::CXCursor_TemplateTemplateParameter: break;
         case CXCursorKind::CXCursor_FunctionTemplate:   AddFunctionTemplate(parent, token); break;
-        case CXCursorKind::CXCursor_ClassTemplate:      break;
+        case CXCursorKind::CXCursor_ClassTemplate:      AddClassTemplate(parent, token); break;
         case CXCursorKind::CXCursor_ClassTemplatePartialSpecialization: break;
         case CXCursorKind::CXCursor_NamespaceAlias:     break;
         case CXCursorKind::CXCursor_UsingDirective:     break;
@@ -376,6 +374,17 @@ bool Parser::FindStructByName(Declaration::Ptr parent, const std::string & name,
     return false;
 }
 
+bool Parser::FindClassTemplateByName(Declaration::Ptr parent, const std::string & name, ClassTemplate::Ptr & result)
+{
+    result = {};
+    if (parent == nullptr)
+        return _ast.FindClassTemplate(name, result);
+    auto parentContainer = dynamic_pointer_cast<Container>(parent);
+    if (parentContainer != nullptr)
+        return parentContainer->FindClassTemplate(name, result);
+    return false;
+}
+
 bool Parser::FindEnumByName(Declaration::Ptr parent, const std::string & name, Enum::Ptr & result)
 {
     result = {};
@@ -568,7 +577,6 @@ void Parser::AddDestructor(Declaration::Ptr parent, CXCursor token)
     CXType functionType = clang_getCursorType(token);
     CXType resultType = clang_getResultType(functionType);
     CXString resultTypeStr = clang_getTypeSpelling(resultType);
-    std::string type = ConvertString(resultTypeStr);
 
     FunctionFlags flags {};
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isConst(token) != 0) ? FunctionFlags::Const : 0));
@@ -825,18 +833,53 @@ void Parser::AddFunctionTemplate(Declaration::Ptr parent, CXCursor token)
     AddToMap(token, object);
 }
 
-void Parser::AddTemplateTypeParameter(Declaration::Ptr parent, CXCursor token)
+void Parser::AddClassTemplate(Declaration::Ptr parent, CXCursor token)
 {
-    FunctionTemplate::Ptr functionTemplate = dynamic_pointer_cast<FunctionTemplate>(parent);
-    if (functionTemplate != nullptr)
+    ClassTemplate::Ptr object;
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
+    bool addNewObject = true;
+    if (FindClassTemplateByName(parent, name, object))
     {
-        std::string name = ConvertString(clang_getCursorSpelling(token));
-        functionTemplate->AddTemplateParameter(name);
+        // If it already exists, we have a duplicate with a new token, and the same object with the new token
+        cout << "Class template already exists." << endl;
+        addNewObject = false;
     }
     else
     {
-        cerr << "Panic! No function template" << endl;
+        object = make_shared<ClassTemplate>(parent, name, accessSpecifier);
     }
+    UpdateStack(object);
+    if (addNewObject)
+    {
+        Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
+        if (parentContainer != nullptr)
+        {
+            parentContainer->Add(object);
+        } else
+        {
+            _ast.Add(object);
+        }
+    }
+    AddToMap(token, object);
+}
+
+void Parser::AddTemplateTypeParameter(Declaration::Ptr parent, CXCursor token)
+{
+    std::string name = ConvertString(clang_getCursorSpelling(token));
+    FunctionTemplate::Ptr functionTemplate = dynamic_pointer_cast<FunctionTemplate>(parent);
+    if (functionTemplate != nullptr)
+    {
+        functionTemplate->AddTemplateParameter(name);
+        return;
+    }
+    ClassTemplate::Ptr classTemplate = dynamic_pointer_cast<ClassTemplate>(parent);
+    if (classTemplate != nullptr)
+    {
+        classTemplate->AddTemplateParameter(name);
+        return;
+    }
+    cerr << "Panic! No function or class template" << endl;
 }
 
 void Parser::UpdateStack(Declaration::Ptr object)

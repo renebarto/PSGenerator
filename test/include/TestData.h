@@ -34,7 +34,8 @@ inline std::string StructHeader() { return CombinePath(TestRoot(), "Struct.h"); 
 inline std::string EnumHeader() { return CombinePath(TestRoot(), "Enum.h"); }
 inline std::string EnumAnonymousHeader() { return CombinePath(TestRoot(), "EnumAnonymous.h"); }
 inline std::string InheritanceHeader() { return CombinePath(TestRoot(), "Inheritance.h"); }
-inline std::string TemplateHeader() { return CombinePath(TestRoot(), "Template.h"); }
+inline std::string TemplateFunctionHeader() { return CombinePath(TestRoot(), "TemplateFunction.h"); }
+inline std::string TemplateClassHeader() { return CombinePath(TestRoot(), "TemplateClass.h"); }
 inline std::string IMemoryHeader() { return CombinePath(TestRoot(), "IMemory.hpp"); }
 inline std::string IPluginHeader() { return CombinePath(TestRoot(), "IPlugin.h"); }
 

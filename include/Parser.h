@@ -13,6 +13,7 @@
 #include "include/Namespace.h"
 #include "include/Class.h"
 #include "include/Struct.h"
+#include "include/ClassTemplate.h"
 #include "include/AST.h"
 
 namespace CPPParser
@@ -111,6 +112,7 @@ private:
     bool FindNamespaceByName(Declaration::Ptr parent, const std::string & name, Namespace::Ptr & result);
     bool FindClassByName(Declaration::Ptr parent, const std::string & name, Class::Ptr & result);
     bool FindStructByName(Declaration::Ptr parent, const std::string & name, Struct::Ptr & result);
+    bool FindClassTemplateByName(Declaration::Ptr parent, const std::string & name, ClassTemplate::Ptr & result);
     bool FindEnumByName(Declaration::Ptr parent, const std::string & name, Enum::Ptr & result);
 
     void AddToMap(CXCursor token, Declaration::Ptr object);
@@ -128,6 +130,7 @@ private:
     void AddDataMember(Declaration::Ptr parent, CXCursor token);
     void AddFunction(Declaration::Ptr parent, CXCursor token);
     void AddFunctionTemplate(Declaration::Ptr parent, CXCursor token);
+    void AddClassTemplate(Declaration::Ptr parent, CXCursor token);
     void AddTemplateTypeParameter(Declaration::Ptr parent, CXCursor token);
     void AddAccessSpecifier(Declaration::Ptr parent, CXCursor token);
     void AddInclude(Declaration::Ptr parent, CXCursor token);

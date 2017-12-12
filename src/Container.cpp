@@ -5,6 +5,7 @@
 #include "include/Namespace.h"
 #include "include/Class.h"
 #include "include/Struct.h"
+#include "include/ClassTemplate.h"
 #include "include/Enum.h"
 #include "include/Typedef.h"
 #include "include/Variable.h"
@@ -66,6 +67,12 @@ void Container::Add(const std::shared_ptr<Declaration> & value)
         AddFunctionTemplate(aFunctionTemplate);
         return;
     }
+    ClassTemplate::Ptr aClassTemplate = dynamic_pointer_cast<ClassTemplate>(value);
+    if (aClassTemplate != nullptr)
+    {
+        AddClassTemplate(aClassTemplate);
+        return;
+    }
 }
 
 void Container::AddNamespace(const Namespace::Ptr & value)
@@ -108,6 +115,11 @@ void Container::AddFunctionTemplate(const std::shared_ptr<FunctionTemplate> & va
     _functionTemplates.push_back(value);
 }
 
+void Container::AddClassTemplate(const std::shared_ptr<ClassTemplate> & value)
+{
+    _classTemplates.push_back(value);
+}
+
 template<class T>
 bool FindElement(std::vector<std::shared_ptr<T>> & list, const std::string & name, std::shared_ptr<T> & result)
 {
@@ -137,6 +149,11 @@ bool Container::FindStruct(const std::string & name, std::shared_ptr<Struct> & r
     return FindElement(_structs, name, result);
 }
 
+bool Container::FindClassTemplate(const std::string & name, std::shared_ptr<ClassTemplate> & result)
+{
+    return FindElement(_classTemplates, name, result);
+}
+
 bool Container::FindEnum(const std::string & name, std::shared_ptr<Enum> & result)
 {
     return FindElement(_enums, name, result);
@@ -150,6 +167,11 @@ bool Container::FindFunction(const std::string & name, std::shared_ptr<Function>
 bool Container::FindTypedef(const std::string & name, std::shared_ptr<Typedef> & result)
 {
     return FindElement(_typedefs, name, result);
+}
+
+bool Container::FindVariable(const std::string & name, std::shared_ptr<Variable> & result)
+{
+    return FindElement(_variables, name, result);
 }
 
 bool Container::FindFunctionTemplate(const std::string & name, std::shared_ptr<FunctionTemplate> & result)

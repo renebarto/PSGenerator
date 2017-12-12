@@ -1,10 +1,10 @@
 #pragma once
 
-typedef int size_t;
+#include <cstddef>
 
 namespace NS1 {
 
 template<class T>
-size_t Size();
+std::size_t Size();
 
 } // namespace NS1

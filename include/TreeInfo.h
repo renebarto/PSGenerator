@@ -9,6 +9,7 @@
 #include <include/Variable.h>
 #include <include/Class.h>
 #include <include/Struct.h>
+#include <include/ClassTemplate.h>
 #include <include/Namespace.h>
 
 using namespace std;
@@ -19,7 +20,7 @@ namespace CPPParser
 class TreeInfo : public IASTVisitor
 {
 public:
-    TreeInfo(std::ostream & stream)
+    explicit TreeInfo(std::ostream & stream)
         : _stream(stream)
         , _indent()
         , _namespaceNesting()
@@ -208,7 +209,37 @@ public:
     virtual bool Enter(const FunctionTemplate & element) override
     {
         _stream << Indent(_indent) << "FunctionTemplate ";
-        EnterFunctionBase(element);
+        _stream << element.Name() << ": " << element.Type() << endl;
+        _stream << Indent(_indent + 1) << "Template parameters:" << endl;
+        for (auto const & parameter : element.TemplateParameters())
+        {
+            _stream << Indent(_indent + 2) << parameter << endl;
+        }
+        _stream << Indent(_indent + 1) << "Qualifiers:";
+        if (element.IsInline())
+            _stream << " inline";
+        if (element.IsStatic())
+            _stream << " static";
+        if (element.IsVirtual())
+            _stream << " virtual";
+        if (element.IsConst())
+            _stream << " const";
+        if (element.IsOverride())
+            _stream << " override";
+        if (element.IsFinal())
+            _stream << " final";
+        if (element.IsPureVirtual())
+            _stream << " purevirtual";
+        if (element.IsDefault())
+            _stream << " default";
+        if (element.IsDeleted())
+            _stream << " delete";
+        _stream << endl;
+        _stream << Indent(_indent + 1) << "Parameters:" << endl;
+        for (auto const & parameter : element.Parameters())
+        {
+            _stream << Indent(_indent + 2) << parameter.Name() << ": " << parameter.Type() << endl;
+        }
         ++_indent;
         return true;
     }
@@ -216,7 +247,7 @@ public:
     {
         --_indent;
         _stream << Indent(_indent) << "FunctionTemplate end ";
-        LeaveFunctionBase(element);
+        _stream << element.Name() << endl;
         return true;
     }
 
@@ -254,6 +285,7 @@ public:
             }
         }
     }
+
     virtual bool Enter(const Class & element) override
     {
         _stream << Indent(_indent) << "Class " << element.Name() << endl;
@@ -279,6 +311,25 @@ public:
     {
         --_indent;
         _stream << Indent(_indent) << "Struct end " << element.Name() << endl;
+        return true;
+    }
+
+    virtual bool Enter(const ClassTemplate & element) override
+    {
+        _stream << Indent(_indent) << "ClassTemplate " << element.Name() << endl;
+        ObjectInheritance(element);
+        _stream << Indent(_indent + 1) << "Template parameters:" << endl;
+        for (auto const & parameter : element.TemplateParameters())
+        {
+            _stream << Indent(_indent + 2) << parameter << endl;
+        }
+        ++_indent;
+        return true;
+    }
+    virtual bool Leave(const ClassTemplate & element) override
+    {
+        --_indent;
+        _stream << Indent(_indent) << "ClassTemplate end " << element.Name() << endl;
         return true;
     }
 

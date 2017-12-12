@@ -10,6 +10,7 @@
 #include <include/Variable.h>
 #include <include/Class.h>
 #include <include/Struct.h>
+#include <include/ClassTemplate.h>
 #include <include/Namespace.h>
 
 using namespace std;
@@ -20,7 +21,7 @@ namespace CPPParser
 class CodeGenerator : public IASTVisitor
 {
 public:
-    CodeGenerator(std::ostream & stream)
+    explicit CodeGenerator(std::ostream & stream)
         : _stream(stream)
         , _indent()
     {
@@ -284,6 +285,7 @@ public:
             }
         }
     }
+
     virtual bool Enter(const Class & element) override
     {
         TRACE2(__func__, "Class", element.Name());
@@ -315,6 +317,37 @@ public:
         TRACE2(__func__, "Struct", element.Name());
         --_indent;
         _stream << Indent(_indent) << "}; // struct " << element.Name() << std::endl;
+        return true;
+    }
+
+    virtual bool Enter(const ClassTemplate & element) override
+    {
+        TRACE2(__func__, "ClassTemplate", element.Name());
+        _stream << Indent(_indent);
+        _stream << "template<";
+        bool firstTemplateParameter = true;
+        for (auto const & parameter : element.TemplateParameters())
+        {
+            if (!firstTemplateParameter)
+            {
+                _stream << ", ";
+            }
+            _stream << "class " << parameter;
+            firstTemplateParameter = false;
+        }
+
+        _stream << "> class " << element.Name();;
+        ObjectInheritance(element);
+        _stream << " {" << std::endl;
+        ++_indent;
+        return true;
+    }
+
+    virtual bool Leave(const ClassTemplate & element) override
+    {
+        TRACE2(__func__, "ClassTemplate", element.Name());
+        --_indent;
+        _stream << Indent(_indent) << "}; // class " << element.Name() << std::endl;
         return true;
     }
 

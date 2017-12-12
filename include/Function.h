@@ -204,6 +204,7 @@ public:
     }
 
     const std::vector<std::string> & TemplateParameters() const { return _templateParameters; }
+
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;

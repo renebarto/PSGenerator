@@ -32,6 +32,7 @@ TEST_FIXTURE(ParserTest, Empty)
     EXPECT_EQ(size_t{0}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -58,6 +59,7 @@ TEST_FIXTURE(ParserTest, SingleNamespace)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -72,6 +74,7 @@ TEST_FIXTURE(ParserTest, SingleNamespace)
     EXPECT_EQ(size_t{0}, ns->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns->Classes().size());
     EXPECT_EQ(size_t{0}, ns->Structs().size());
+    EXPECT_EQ(size_t{0}, ns->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns->Enums().size());
     EXPECT_EQ(size_t{0}, ns->Functions().size());
     EXPECT_EQ(size_t{0}, ns->Typedefs().size());
@@ -99,6 +102,7 @@ TEST_FIXTURE(ParserTest, NestedNamespace)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -113,6 +117,7 @@ TEST_FIXTURE(ParserTest, NestedNamespace)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -127,6 +132,7 @@ TEST_FIXTURE(ParserTest, NestedNamespace)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns2->Classes().size());
     EXPECT_EQ(size_t{0}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -156,6 +162,7 @@ TEST_FIXTURE(ParserTest, AnonymousNamespace)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -170,6 +177,7 @@ TEST_FIXTURE(ParserTest, AnonymousNamespace)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -184,6 +192,7 @@ TEST_FIXTURE(ParserTest, AnonymousNamespace)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns2->Classes().size());
     EXPECT_EQ(size_t{0}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -213,6 +222,7 @@ TEST_FIXTURE(ParserTest, NamespaceWithVarsAndFunctions)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -227,6 +237,7 @@ TEST_FIXTURE(ParserTest, NamespaceWithVarsAndFunctions)
     EXPECT_EQ(size_t{0}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{1}, ns1->Functions().size());
     EXPECT_EQ(size_t{1}, ns1->Typedefs().size());
@@ -257,6 +268,7 @@ TEST_FIXTURE(ParserTest, Class)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -271,6 +283,7 @@ TEST_FIXTURE(ParserTest, Class)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{1}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -298,6 +311,7 @@ TEST_FIXTURE(ParserTest, Class)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{1}, ns2->Classes().size());
     EXPECT_EQ(size_t{0}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -350,6 +364,7 @@ TEST_FIXTURE(ParserTest, Struct)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -364,6 +379,7 @@ TEST_FIXTURE(ParserTest, Struct)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -378,6 +394,7 @@ TEST_FIXTURE(ParserTest, Struct)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns2->Classes().size());
     EXPECT_EQ(size_t{2}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -444,6 +461,7 @@ TEST_FIXTURE(ParserTest, Enum)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -458,6 +476,7 @@ TEST_FIXTURE(ParserTest, Enum)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -472,6 +491,7 @@ TEST_FIXTURE(ParserTest, Enum)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns2->Classes().size());
     EXPECT_EQ(size_t{0}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{1}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -507,6 +527,7 @@ TEST_FIXTURE(ParserTest, EnumAnonymous)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -521,6 +542,7 @@ TEST_FIXTURE(ParserTest, EnumAnonymous)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -535,6 +557,7 @@ TEST_FIXTURE(ParserTest, EnumAnonymous)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns2->Classes().size());
     EXPECT_EQ(size_t{0}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{1}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -570,6 +593,7 @@ TEST_FIXTURE(ParserTest, Inheritance)
     EXPECT_EQ(size_t{1}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{0}, ast.Typedefs().size());
@@ -584,6 +608,7 @@ TEST_FIXTURE(ParserTest, Inheritance)
     EXPECT_EQ(size_t{1}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -598,6 +623,7 @@ TEST_FIXTURE(ParserTest, Inheritance)
     EXPECT_EQ(size_t{0}, ns2->Namespaces().size());
     EXPECT_EQ(size_t{2}, ns2->Classes().size());
     EXPECT_EQ(size_t{0}, ns2->Structs().size());
+    EXPECT_EQ(size_t{0}, ns2->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns2->Enums().size());
     EXPECT_EQ(size_t{0}, ns2->Functions().size());
     EXPECT_EQ(size_t{0}, ns2->Typedefs().size());
@@ -635,25 +661,56 @@ TEST_FIXTURE(ParserTest, Inheritance)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_FIXTURE(ParserTest, Template)
+TEST_FIXTURE(ParserTest, FunctionTemplate)
 {
-    Parser parser(TestData::TemplateHeader());
+    Parser parser(TestData::TemplateFunctionHeader());
 
     ASSERT_TRUE(parser.Parse(compileOptions));
 
     const AST & ast = parser.GetAST();
     EXPECT_EQ(nullptr, ast.Parent());
 
-    EXPECT_EQ(size_t{1}, ast.Namespaces().size());
+    EXPECT_EQ(size_t{3}, ast.Namespaces().size());
     EXPECT_EQ(size_t{0}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
-    EXPECT_EQ(size_t{1}, ast.Typedefs().size());
+    EXPECT_EQ(size_t{0}, ast.Typedefs().size());
     EXPECT_EQ(size_t{0}, ast.Variables().size());
     EXPECT_EQ(size_t{0}, ast.FunctionTemplates().size());
 
-    const Namespace::Ptr ns1 = ast.Namespaces()[0];
+    const Namespace::Ptr nsstd = ast.Namespaces()[0];
+    ASSERT_NE(nullptr, nsstd);
+    EXPECT_EQ("std", nsstd->Name());
+    EXPECT_EQ(nullptr, nsstd->Parent());
+
+    EXPECT_EQ(size_t{1}, nsstd->Namespaces().size());
+    EXPECT_EQ(size_t{0}, nsstd->Classes().size());
+    EXPECT_EQ(size_t{0}, nsstd->Structs().size());
+    EXPECT_EQ(size_t{0}, nsstd->ClassTemplates().size());
+    EXPECT_EQ(size_t{0}, nsstd->Enums().size());
+    EXPECT_EQ(size_t{0}, nsstd->Functions().size());
+    EXPECT_EQ(size_t{3}, nsstd->Typedefs().size());
+    EXPECT_EQ(size_t{0}, nsstd->Variables().size());
+    EXPECT_EQ(size_t{0}, nsstd->FunctionTemplates().size());
+
+    const Namespace::Ptr nsGNUCXX = ast.Namespaces()[1];
+    ASSERT_NE(nullptr, nsGNUCXX);
+    EXPECT_EQ("__gnu_cxx", nsGNUCXX->Name());
+    EXPECT_EQ(nullptr, nsGNUCXX->Parent());
+
+    EXPECT_EQ(size_t{1}, nsGNUCXX->Namespaces().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Classes().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Structs().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->ClassTemplates().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Enums().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Functions().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Typedefs().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Variables().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->FunctionTemplates().size());
+
+    const Namespace::Ptr ns1 = ast.Namespaces()[2];
     ASSERT_NE(nullptr, ns1);
     EXPECT_EQ("NS1", ns1->Name());
     EXPECT_EQ(nullptr, ns1->Parent());
@@ -661,6 +718,7 @@ TEST_FIXTURE(ParserTest, Template)
     EXPECT_EQ(size_t{0}, ns1->Namespaces().size());
     EXPECT_EQ(size_t{0}, ns1->Classes().size());
     EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{0}, ns1->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ns1->Enums().size());
     EXPECT_EQ(size_t{0}, ns1->Functions().size());
     EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
@@ -668,9 +726,108 @@ TEST_FIXTURE(ParserTest, Template)
     EXPECT_EQ(size_t{1}, ns1->FunctionTemplates().size());
 
     std::string expected =
-        "typedef int size_t;\n"
+        "namespace std {\n"
+        "    typedef unsigned long size_t;\n"
+        "    typedef long ptrdiff_t;\n"
+        "    typedef decltype(nullptr) nullptr_t;\n"
+        "    namespace __cxx11 {\n"
+        "    } // namespace __cxx11\n"
+        "} // namespace std\n"
+        "namespace __gnu_cxx {\n"
+        "    namespace __cxx11 {\n"
+        "    } // namespace __cxx11\n"
+        "} // namespace __gnu_cxx\n"
         "namespace NS1 {\n"
-        "    template<class T> size_t Size();\n"
+        "    template<class T> std::size_t Size();\n"
+        "} // namespace NS1\n";
+    std::ostringstream stream;
+    ast.GenerateCode(stream, 0);
+    std::string actual = stream.str();
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(ParserTest, ClassTemplate)
+{
+    Parser parser(TestData::TemplateClassHeader());
+
+    ASSERT_TRUE(parser.Parse(compileOptions));
+
+    const AST & ast = parser.GetAST();
+    EXPECT_EQ(nullptr, ast.Parent());
+
+    EXPECT_EQ(size_t{3}, ast.Namespaces().size());
+    EXPECT_EQ(size_t{0}, ast.Classes().size());
+    EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
+    EXPECT_EQ(size_t{0}, ast.Enums().size());
+    EXPECT_EQ(size_t{0}, ast.Functions().size());
+    EXPECT_EQ(size_t{0}, ast.Typedefs().size());
+    EXPECT_EQ(size_t{0}, ast.Variables().size());
+    EXPECT_EQ(size_t{0}, ast.FunctionTemplates().size());
+
+    const Namespace::Ptr nsstd = ast.Namespaces()[0];
+    ASSERT_NE(nullptr, nsstd);
+    EXPECT_EQ("std", nsstd->Name());
+    EXPECT_EQ(nullptr, nsstd->Parent());
+
+    EXPECT_EQ(size_t{1}, nsstd->Namespaces().size());
+    EXPECT_EQ(size_t{0}, nsstd->Classes().size());
+    EXPECT_EQ(size_t{0}, nsstd->Structs().size());
+    EXPECT_EQ(size_t{0}, nsstd->ClassTemplates().size());
+    EXPECT_EQ(size_t{0}, nsstd->Enums().size());
+    EXPECT_EQ(size_t{0}, nsstd->Functions().size());
+    EXPECT_EQ(size_t{3}, nsstd->Typedefs().size());
+    EXPECT_EQ(size_t{0}, nsstd->Variables().size());
+    EXPECT_EQ(size_t{0}, nsstd->FunctionTemplates().size());
+
+    const Namespace::Ptr nsGNUCXX = ast.Namespaces()[1];
+    ASSERT_NE(nullptr, nsGNUCXX);
+    EXPECT_EQ("__gnu_cxx", nsGNUCXX->Name());
+    EXPECT_EQ(nullptr, nsGNUCXX->Parent());
+
+    EXPECT_EQ(size_t{1}, nsGNUCXX->Namespaces().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Classes().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Structs().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->ClassTemplates().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Enums().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Functions().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Typedefs().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->Variables().size());
+    EXPECT_EQ(size_t{0}, nsGNUCXX->FunctionTemplates().size());
+
+    const Namespace::Ptr ns1 = ast.Namespaces()[2];
+    ASSERT_NE(nullptr, ns1);
+    EXPECT_EQ("NS1", ns1->Name());
+    EXPECT_EQ(nullptr, ns1->Parent());
+
+    EXPECT_EQ(size_t{0}, ns1->Namespaces().size());
+    EXPECT_EQ(size_t{0}, ns1->Classes().size());
+    EXPECT_EQ(size_t{0}, ns1->Structs().size());
+    EXPECT_EQ(size_t{1}, ns1->ClassTemplates().size());
+    EXPECT_EQ(size_t{0}, ns1->Enums().size());
+    EXPECT_EQ(size_t{0}, ns1->Functions().size());
+    EXPECT_EQ(size_t{0}, ns1->Typedefs().size());
+    EXPECT_EQ(size_t{0}, ns1->Variables().size());
+    EXPECT_EQ(size_t{0}, ns1->FunctionTemplates().size());
+
+    std::string expected =
+        "namespace std {\n"
+        "    typedef unsigned long size_t;\n"
+        "    typedef long ptrdiff_t;\n"
+        "    typedef decltype(nullptr) nullptr_t;\n"
+        "    namespace __cxx11 {\n"
+        "    } // namespace __cxx11\n"
+        "} // namespace std\n"
+        "namespace __gnu_cxx {\n"
+        "    namespace __cxx11 {\n"
+        "    } // namespace __cxx11\n"
+        "} // namespace __gnu_cxx\n"
+        "namespace NS1 {\n"
+        "    template<class T> class A {\n"
+        "        A<T>(std::size_t n);\n"
+        "        const T * Data() const;\n"
+        "        T * _data;\n"
+        "    }; // class A\n"
         "} // namespace NS1\n";
     std::ostringstream stream;
     ast.GenerateCode(stream, 0);
@@ -698,6 +855,7 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -712,6 +870,7 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(size_t{1}, nsCore->Namespaces().size());
     EXPECT_EQ(size_t{0}, nsCore->Classes().size());
     EXPECT_EQ(size_t{1}, nsCore->Structs().size());
+    EXPECT_EQ(size_t{1}, nsCore->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsCore->Enums().size());
     EXPECT_EQ(size_t{0}, nsCore->Functions().size());
     EXPECT_EQ(size_t{0}, nsCore->Typedefs().size());
@@ -726,6 +885,7 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(size_t{3}, nsWPEFramework->Namespaces().size()); // PluginHost, Web, Exchange
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -740,6 +900,7 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());
@@ -754,6 +915,7 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(size_t{0}, nsWeb->Namespaces().size());
     EXPECT_EQ(size_t{2}, nsWeb->Classes().size());
     EXPECT_EQ(size_t{0}, nsWeb->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWeb->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWeb->Enums().size());
     EXPECT_EQ(size_t{0}, nsWeb->Functions().size());
     EXPECT_EQ(size_t{0}, nsWeb->Typedefs().size());
@@ -768,6 +930,7 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(size_t{0}, nsExchange->Namespaces().size());
     EXPECT_EQ(size_t{0}, nsExchange->Classes().size());
     EXPECT_EQ(size_t{1}, nsExchange->Structs().size());
+    EXPECT_EQ(size_t{0}, nsExchange->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsExchange->Enums().size());
     EXPECT_EQ(size_t{0}, nsExchange->Functions().size());
     EXPECT_EQ(size_t{0}, nsExchange->Typedefs().size());
@@ -780,20 +943,52 @@ TEST_FIXTURE(ParserTest, IMemory)
     EXPECT_EQ(nsExchange, intf->Parent());
 
     std::string expected =
-        "struct IMemory : virtual public Core::IUnknown {\n"
-            "    enum {\n"
-            "        ID = 82,\n"
-            "    }; // enum <anonymous>\n"
-            "    virtual ~IMemory();\n"
-            "    virtual uint64 Resident() const = 0;\n"
-            "    virtual uint64 Allocated() const = 0;\n"
-            "    virtual uint64 Shared() const = 0;\n"
-            "    virtual uint8 Processes() const = 0;\n"
-            "    virtual const bool IsOperational() const = 0;\n"
-            "}; // struct IMemory\n";
+        "namespace Core {\n"
+        "    struct IUnknown {\n"
+        "    }; // struct IUnknown\n"
+        "    template<class CONTEXT> class ProxyType {\n"
+        "    }; // class ProxyType\n"
+        "    namespace JSON {\n"
+        "        struct IElement {\n"
+        "        }; // struct IElement\n"
+        "    } // namespace JSON\n"
+        "} // namespace Core\n"
+        "namespace WPEFramework {\n"
+        "    namespace PluginHost {\n"
+        "        struct IShell {\n"
+        "        }; // struct IShell\n"
+        "        class Channel {\n"
+        "        }; // class Channel\n"
+        "    } // namespace PluginHost\n"
+        "    namespace Web {\n"
+        "        class Request {\n"
+        "        }; // class Request\n"
+        "        class Response {\n"
+        "        }; // class Response\n"
+        "    } // namespace Web\n"
+        "    namespace Exchange {\n"
+        "        struct IMemory : virtual public Core::IUnknown {\n"
+        "            enum {\n"
+        "                ID = 82,\n"
+        "            }; // enum <anonymous>\n"
+        "            virtual ~IMemory();\n"
+        "            virtual uint64 Resident() const = 0;\n"
+        "            virtual uint64 Allocated() const = 0;\n"
+        "            virtual uint64 Shared() const = 0;\n"
+        "            virtual uint8 Processes() const = 0;\n"
+        "            virtual const bool IsOperational() const = 0;\n"
+        "        }; // struct IMemory\n"
+        "    } // namespace Exchange\n"
+        "} // namespace WPEFramework\n"
+        "typedef unsigned long long uint64;\n"
+        "typedef unsigned int uint32;\n"
+        "typedef unsigned short uint16;\n"
+        "typedef unsigned char uint8;\n"
+        "class string {\n"
+        "}; // class string\n";
     std::ostringstream stream;
     CodeGenerator codeGenerator(stream);
-    intf->Visit(codeGenerator);
+    ast.Visit(codeGenerator);
     std::string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }
@@ -810,6 +1005,7 @@ TEST_FIXTURE(ParserTest, IPlugin)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -824,6 +1020,7 @@ TEST_FIXTURE(ParserTest, IPlugin)
     EXPECT_EQ(size_t{1}, nsCore->Namespaces().size());
     EXPECT_EQ(size_t{0}, nsCore->Classes().size());
     EXPECT_EQ(size_t{1}, nsCore->Structs().size());
+    EXPECT_EQ(size_t{1}, nsCore->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsCore->Enums().size());
     EXPECT_EQ(size_t{0}, nsCore->Functions().size());
     EXPECT_EQ(size_t{0}, nsCore->Typedefs().size());
@@ -838,6 +1035,7 @@ TEST_FIXTURE(ParserTest, IPlugin)
     EXPECT_EQ(size_t{2}, nsWPEFramework->Namespaces().size()); // PluginHost, Web
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -852,6 +1050,7 @@ TEST_FIXTURE(ParserTest, IPlugin)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{7}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());
@@ -866,6 +1065,7 @@ TEST_FIXTURE(ParserTest, IPlugin)
     EXPECT_EQ(size_t{0}, nsWeb->Namespaces().size());
     EXPECT_EQ(size_t{2}, nsWeb->Classes().size());
     EXPECT_EQ(size_t{0}, nsWeb->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWeb->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWeb->Enums().size());
     EXPECT_EQ(size_t{0}, nsWeb->Functions().size());
     EXPECT_EQ(size_t{0}, nsWeb->Typedefs().size());
@@ -878,25 +1078,91 @@ TEST_FIXTURE(ParserTest, IPlugin)
     EXPECT_EQ(nsPluginHost, IPlugin->Parent());
 
     std::string expected =
-        "struct IPlugin : virtual public Core::IUnknown {\n"
-            "    enum {\n"
-            "        ID = 32,\n"
-            "    }; // enum <anonymous>\n"
-            "    struct INotification : virtual public Core::IUnknown {\n"
-            "        enum {\n"
-            "            ID = 33,\n"
-            "        }; // enum <anonymous>\n"
-            "        virtual ~INotification();\n"
-            "        virtual void StateChange(PluginHost::IShell * plugin) = 0;\n"
-            "    }; // struct INotification\n"
-            "    virtual ~IPlugin();\n"
-            "    virtual const string Initialize(PluginHost::IShell * shell) = 0;\n"
-            "    virtual void Deinitialize(PluginHost::IShell * shell) = 0;\n"
-            "    virtual string Information() const = 0;\n"
-            "}; // struct IPlugin\n";
+        "namespace Core {\n"
+        "    struct IUnknown {\n"
+        "    }; // struct IUnknown\n"
+        "    template<class CONTEXT> class ProxyType {\n"
+        "    }; // class ProxyType\n"
+        "    namespace JSON {\n"
+        "        struct IElement {\n"
+        "        }; // struct IElement\n"
+        "    } // namespace JSON\n"
+        "} // namespace Core\n"
+        "namespace WPEFramework {\n"
+        "    namespace PluginHost {\n"
+        "        struct IShell {\n"
+        "        }; // struct IShell\n"
+        "        class Channel {\n"
+        "        }; // class Channel\n"
+        "        struct IPlugin : virtual public Core::IUnknown {\n"
+        "            enum {\n"
+        "                ID = 32,\n"
+        "            }; // enum <anonymous>\n"
+        "            struct INotification : virtual public Core::IUnknown {\n"
+        "                enum {\n"
+        "                    ID = 33,\n"
+        "                }; // enum <anonymous>\n"
+        "                virtual ~INotification();\n"
+        "                virtual void StateChange(PluginHost::IShell * plugin) = 0;\n"
+        "            }; // struct INotification\n"
+        "            virtual ~IPlugin();\n"
+        "            virtual const string Initialize(PluginHost::IShell * shell) = 0;\n"
+        "            virtual void Deinitialize(PluginHost::IShell * shell) = 0;\n"
+        "            virtual string Information() const = 0;\n"
+        "        }; // struct IPlugin\n"
+        "        struct IPluginExtended : public struct WPEFramework::PluginHost::IPlugin {\n"
+        "            enum {\n"
+        "                ID = 34,\n"
+        "            }; // enum <anonymous>\n"
+        "            virtual ~IPluginExtended();\n"
+        "            virtual bool Attach(PluginHost::Channel & channel) = 0;\n"
+        "            virtual void Detach(PluginHost::Channel & channel) = 0;\n"
+        "        }; // struct IPluginExtended\n"
+        "        struct IWeb : virtual public Core::IUnknown {\n"
+        "            enum {\n"
+        "                ID = 35,\n"
+        "            }; // enum <anonymous>\n"
+        "            virtual void Inbound(Web::Request & request) = 0;\n"
+        "            virtual Core::ProxyType<Web::Response> Process(const Web::Request & request) = 0;\n"
+        "        }; // struct IWeb\n"
+        "        struct IWebSocket : virtual public Core::IUnknown {\n"
+        "            enum {\n"
+        "                ID = 36,\n"
+        "            }; // enum <anonymous>\n"
+        "            virtual Core::ProxyType<Core::JSON::IElement> Inbound(const string & identifier) = 0;\n"
+        "            virtual Core::ProxyType<Core::JSON::IElement> Inbound(const uint32 ID, const Core::JSON::IElement & element) = 0;\n"
+        "        }; // struct IWebSocket\n"
+        "        struct IChannel : virtual public Core::IUnknown {\n"
+        "            enum {\n"
+        "                ID = 37,\n"
+        "            }; // enum <anonymous>\n"
+        "            virtual uint32 Inbound(const uint32 ID, const uint8 [] data, const uint16 length) = 0;\n"
+        "            virtual uint32 Outbound(const uint32 ID, uint8 [] data, const uint16 length) const = 0;\n"
+        "        }; // struct IChannel\n"
+        "        struct ISecurity : virtual public Core::IUnknown {\n"
+        "            enum {\n"
+        "                ID = 38,\n"
+        "            }; // enum <anonymous>\n"
+        "            virtual bool Allowed(const Web::Request & request) = 0;\n"
+        "            virtual Core::ProxyType<Web::Response> Options(const Web::Request & request) = 0;\n"
+        "        }; // struct ISecurity\n"
+        "    } // namespace PluginHost\n"
+        "    namespace Web {\n"
+        "        class Request {\n"
+        "        }; // class Request\n"
+        "        class Response {\n"
+        "        }; // class Response\n"
+        "    } // namespace Web\n"
+        "} // namespace WPEFramework\n"
+        "typedef unsigned long long uint64;\n"
+        "typedef unsigned int uint32;\n"
+        "typedef unsigned short uint16;\n"
+        "typedef unsigned char uint8;\n"
+        "class string {\n"
+        "}; // class string\n";
     std::ostringstream stream;
     CodeGenerator codeGenerator(stream);
-    IPlugin->Visit(codeGenerator);
+    ast.Visit(codeGenerator);
     std::string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }
@@ -913,6 +1179,7 @@ TEST_FIXTURE(ParserTest, IPluginExtended)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -927,6 +1194,7 @@ TEST_FIXTURE(ParserTest, IPluginExtended)
     EXPECT_EQ(size_t{2}, nsWPEFramework->Namespaces().size()); // PluginHost, Web
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -941,6 +1209,7 @@ TEST_FIXTURE(ParserTest, IPluginExtended)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{7}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());
@@ -980,6 +1249,7 @@ TEST_FIXTURE(ParserTest, IWeb)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -994,6 +1264,7 @@ TEST_FIXTURE(ParserTest, IWeb)
     EXPECT_EQ(size_t{2}, nsWPEFramework->Namespaces().size()); // PluginHost, Web
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -1008,6 +1279,7 @@ TEST_FIXTURE(ParserTest, IWeb)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{7}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());
@@ -1046,6 +1318,7 @@ TEST_FIXTURE(ParserTest, IWebSocket)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -1060,6 +1333,7 @@ TEST_FIXTURE(ParserTest, IWebSocket)
     EXPECT_EQ(size_t{1}, nsCore->Namespaces().size());
     EXPECT_EQ(size_t{0}, nsCore->Classes().size());
     EXPECT_EQ(size_t{1}, nsCore->Structs().size());
+    EXPECT_EQ(size_t{1}, nsCore->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsCore->Enums().size());
     EXPECT_EQ(size_t{0}, nsCore->Functions().size());
     EXPECT_EQ(size_t{0}, nsCore->Typedefs().size());
@@ -1074,6 +1348,7 @@ TEST_FIXTURE(ParserTest, IWebSocket)
     EXPECT_EQ(size_t{2}, nsWPEFramework->Namespaces().size()); // PluginHost, Web
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -1088,6 +1363,7 @@ TEST_FIXTURE(ParserTest, IWebSocket)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{7}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());
@@ -1102,6 +1378,7 @@ TEST_FIXTURE(ParserTest, IWebSocket)
     EXPECT_EQ(size_t{0}, nsWeb->Namespaces().size());
     EXPECT_EQ(size_t{2}, nsWeb->Classes().size());
     EXPECT_EQ(size_t{0}, nsWeb->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWeb->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWeb->Enums().size());
     EXPECT_EQ(size_t{0}, nsWeb->Functions().size());
     EXPECT_EQ(size_t{0}, nsWeb->Typedefs().size());
@@ -1140,6 +1417,7 @@ TEST_FIXTURE(ParserTest, IChannel)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -1154,6 +1432,7 @@ TEST_FIXTURE(ParserTest, IChannel)
     EXPECT_EQ(size_t{2}, nsWPEFramework->Namespaces().size()); // PluginHost, Web
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -1168,6 +1447,7 @@ TEST_FIXTURE(ParserTest, IChannel)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{7}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());
@@ -1206,6 +1486,7 @@ TEST_FIXTURE(ParserTest, ISecurity)
     EXPECT_EQ(size_t{2}, ast.Namespaces().size()); // Core, WPEFramework
     EXPECT_EQ(size_t{1}, ast.Classes().size());
     EXPECT_EQ(size_t{0}, ast.Structs().size());
+    EXPECT_EQ(size_t{0}, ast.ClassTemplates().size());
     EXPECT_EQ(size_t{0}, ast.Enums().size());
     EXPECT_EQ(size_t{0}, ast.Functions().size());
     EXPECT_EQ(size_t{4}, ast.Typedefs().size());
@@ -1220,6 +1501,7 @@ TEST_FIXTURE(ParserTest, ISecurity)
     EXPECT_EQ(size_t{2}, nsWPEFramework->Namespaces().size()); // PluginHost, Web
     EXPECT_EQ(size_t{0}, nsWPEFramework->Classes().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Structs().size());
+    EXPECT_EQ(size_t{0}, nsWPEFramework->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Enums().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Functions().size());
     EXPECT_EQ(size_t{0}, nsWPEFramework->Typedefs().size());
@@ -1234,6 +1516,7 @@ TEST_FIXTURE(ParserTest, ISecurity)
     EXPECT_EQ(size_t{0}, nsPluginHost->Namespaces().size());
     EXPECT_EQ(size_t{1}, nsPluginHost->Classes().size());
     EXPECT_EQ(size_t{7}, nsPluginHost->Structs().size());
+    EXPECT_EQ(size_t{0}, nsPluginHost->ClassTemplates().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Enums().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Functions().size());
     EXPECT_EQ(size_t{0}, nsPluginHost->Typedefs().size());

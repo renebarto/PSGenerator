@@ -488,7 +488,6 @@ TEST_FIXTURE(TreeInfoTest, SingleTypedef)
         "        Typedef x: int\n"
         "    Namespace end <global>\n"
         "AST end\n";
-        "typedef int x;\n";
     std::string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }

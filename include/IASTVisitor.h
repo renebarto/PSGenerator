@@ -18,6 +18,7 @@ class DataMember;
 class Inheritance;
 class Class;
 class Struct;
+class ClassTemplate;
 class Namespace;
 
 class IASTVisitor
@@ -63,6 +64,9 @@ public:
 
     virtual bool Enter(const Struct &) = 0;
     virtual bool Leave(const Struct &) = 0;
+
+    virtual bool Enter(const ClassTemplate &) = 0;
+    virtual bool Leave(const ClassTemplate &) = 0;
 
     virtual bool Enter(const Namespace &) = 0;
     virtual bool Leave(const Namespace &) = 0;

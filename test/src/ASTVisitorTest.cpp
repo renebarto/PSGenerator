@@ -7,6 +7,7 @@
 #include <include/Namespace.h>
 #include <include/Class.h>
 #include <include/Struct.h>
+#include <include/ClassTemplate.h>
 #include <include/TestData.h>
 
 using namespace std;
@@ -79,6 +80,7 @@ public:
         , _dataMember()
         , _class()
         , _struct()
+        , _classTemplate()
         , _namespace()
     {
     }
@@ -252,6 +254,19 @@ public:
         return true;
     }
 
+    virtual bool Enter(const ClassTemplate & element) override
+    {
+        TRACE2("ClassTemplate", element.Name());
+        _classTemplate.Enter(element.Name());
+        return true;
+    }
+    virtual bool Leave(const ClassTemplate & element) override
+    {
+        TRACE2("ClassTemplate", element.Name());
+        _classTemplate.Leave();
+        return true;
+    }
+
     virtual bool Enter(const Namespace & element) override
     {
         TRACE2("Namespace", element.Name());
@@ -279,6 +294,7 @@ public:
     EnterLeaveInfo _dataMember;
     EnterLeaveInfo _class;
     EnterLeaveInfo _struct;
+    EnterLeaveInfo _classTemplate;
     EnterLeaveInfo _namespace;
 };
 

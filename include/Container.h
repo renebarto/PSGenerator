@@ -26,6 +26,7 @@ public:
         , _contents()
         , _namespaces()
         , _classes()
+        , _classTemplates()
         , _structs()
         , _enums()
         , _functions()
@@ -37,6 +38,7 @@ public:
     const PtrList<Namespace> & Namespaces() const { return _namespaces; }
     const PtrList<Class> & Classes() const { return _classes; }
     const PtrList<Struct> & Structs() const { return _structs; }
+    const PtrList<ClassTemplate> & ClassTemplates() const { return _classTemplates; }
     const PtrList<Enum> & Enums() const { return _enums; }
     const PtrList<Function> & Functions() const { return _functions; }
     const PtrList<Typedef> & Typedefs() const { return _typedefs; }
@@ -48,10 +50,11 @@ public:
     bool FindNamespace(const std::string & name, std::shared_ptr<Namespace> & result);
     bool FindClass(const std::string & name, std::shared_ptr<Class> & result);
     bool FindStruct(const std::string & name, std::shared_ptr<Struct> & result);
+    bool FindClassTemplate(const std::string & name, std::shared_ptr<ClassTemplate> & result);
     bool FindEnum(const std::string & name, std::shared_ptr<Enum> & result);
     bool FindFunction(const std::string & name, std::shared_ptr<Function> & result);
     bool FindTypedef(const std::string & name, std::shared_ptr<Typedef> & result);
-    bool FindVariable(const std::string & name, std::shared_ptr<Typedef> & result);
+    bool FindVariable(const std::string & name, std::shared_ptr<Variable> & result);
     bool FindFunctionTemplate(const std::string & name, std::shared_ptr<FunctionTemplate> & result);
 
     bool VisitChildren(IASTVisitor & visitor) const
@@ -70,6 +73,7 @@ protected:
     PtrList<Namespace> _namespaces;
     PtrList<Class> _classes;
     PtrList<Struct> _structs;
+    PtrList<ClassTemplate> _classTemplates;
     PtrList<Enum> _enums;
     PtrList<Function> _functions;
     PtrList<Typedef> _typedefs;
@@ -85,6 +89,7 @@ private:
     void AddTypedef(const std::shared_ptr<Typedef> & value);
     void AddVariable(const std::shared_ptr<Variable> & value);
     void AddFunctionTemplate(const std::shared_ptr<FunctionTemplate> & value);
+    void AddClassTemplate(const std::shared_ptr<ClassTemplate> & value);
 };
 
 } // namespace CPPParser
