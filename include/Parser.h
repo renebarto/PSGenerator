@@ -15,6 +15,7 @@
 #include "include/Struct.h"
 #include "include/ClassTemplate.h"
 #include "include/AST.h"
+#include "include/TraversalTree.h"
 
 namespace CPPParser
 {
@@ -58,7 +59,7 @@ public:
         // Returns 1 for last element, 2 for one but last, etc., and 0 for not found.
         for (size_t index = 0; index < _stack.size(); ++index)
         {
-            CXCursor value = _stack[_stack.size() - index - 1];
+            auto value = _stack[_stack.size() - index - 1];
             if (element == value)
             {
                 return index;
@@ -95,6 +96,7 @@ public:
     const AST & GetAST() const { return _ast; }
 
     void Show(std::ostream & stream);
+    void TraverseTree(std::ostream & stream);
 
     void PrintToken(CXCursor token, CXCursor parentToken);
     void HandleToken(CXCursor token, CXCursor parentToken);
@@ -103,9 +105,11 @@ private:
     std::string _path;
     std::string _fileName;
     AST _ast;
+    Traversal::Tree _traversalTree;
     CXCursor _token;
     CXCursor _parentToken;
     Stack<CXCursor> _stack;
+    Stack<Declaration::Ptr> _traversalStack;
     TokenLookupMap _tokenLookupMap;
     TypeLookupMap _typeLookupMap;
 
@@ -137,6 +141,7 @@ private:
 
     void UpdateStack(Declaration::Ptr object);
     void ShowStack();
+    void ShowTraversalStack();
 };
 
 } // namespace CPPParser

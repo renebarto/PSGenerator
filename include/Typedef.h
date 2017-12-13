@@ -25,6 +25,14 @@ public:
 
     const std::string & Type() const { return _type; }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;

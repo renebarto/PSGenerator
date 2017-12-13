@@ -69,6 +69,8 @@ public:
     std::shared_ptr<Declaration> Parent() const { return _parent.lock(); }
     AccessSpecifier Access() const { return _accessSpecifier; }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const = 0;
+    virtual bool TraverseEnd(IASTVisitor & visitor) const = 0;
     virtual bool Visit(IASTVisitor & visitor) const = 0;
     virtual bool IsValid() const { return false; }
 

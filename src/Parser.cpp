@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <clang-c/Index.h>
 #include <include/TreeInfo.h>
+#include <include/CodeGenerator.h>
 #include "include/Utility.h"
 #include "include/Typedef.h"
 #include "include/Variable.h"
@@ -36,9 +37,11 @@ Parser::Parser(const std::string & path)
     : _path(path)
     , _fileName()
     , _ast()
+    , _traversalTree()
     , _token()
     , _parentToken()
     , _stack()
+    , _traversalStack()
     , _tokenLookupMap()
     , _typeLookupMap()
 {
@@ -86,8 +89,6 @@ bool Parser::Parse(const OptionsList & options)
 
     clang_disposeTranslationUnit(unit);
     clang_disposeIndex(index);
-
-    Show(cout);
 
     return true;
 }
@@ -333,6 +334,12 @@ void Parser::Show(std::ostream & stream)
     _ast.Show(stream, 0);
 }
 
+void Parser::TraverseTree(std::ostream & stream)
+{
+    CodeGenerator codeGenerator(stream);
+    _traversalTree.Visit(codeGenerator);
+}
+
 void Parser::AddToMap(CXCursor token, Declaration::Ptr object)
 {
     CXType type = clang_getCursorType(token);
@@ -425,7 +432,9 @@ void Parser::AddNamespace(Declaration::Ptr parent, CXCursor token)
             _ast.Add(object);
         }
     }
+    _traversalTree.AddNode(make_shared<Traversal::Element>(object));
     AddToMap(token, object);
+    ShowTraversalStack();
 }
 
 void Parser::AddClass(Declaration::Ptr parent, CXCursor token)
@@ -669,7 +678,14 @@ void Parser::AddBaseClass(Declaration::Ptr parent, CXCursor token)
     }
     else
     {
-        cerr << "Type is not an object" <<  parent->Name() << endl;
+        if (parent == nullptr)
+        {
+            cerr << "Type is null. Type not supported yet?" << endl;
+        }
+        else
+        {
+            cerr << "Type is not an object" <<  parent->Name() << endl;
+        }
         return;
     }
 }
@@ -897,6 +913,21 @@ void Parser::UpdateStack(Declaration::Ptr object)
         _stack.RemoveTopElements(_stack.Count());
     }
     _stack.Push(_token);
+
+    // Update traversal stack
+    index = _traversalStack.Find(object);
+    if (index > 0)
+    {
+        // Make sure parent cursor is at top of stack, remove any others
+        _traversalStack.RemoveTopElements(index);
+    }
+    else if (index < 0)
+    {
+        // Parent is not on stack, clear stack completely
+        // Make sure parent cursor is at top of stack, remove any others
+        _traversalStack.RemoveTopElements(_traversalStack.Count());
+    }
+    _traversalStack.Push(object);
 }
 
 void Parser::ShowStack()
@@ -963,6 +994,20 @@ void Parser::ShowStack()
         TreeInfo treeInfo(cout);
         element.second->Visit(treeInfo);
     }
+}
+
+void Parser::ShowTraversalStack()
+{
+    cout << "Traversal stack contents:" << endl;
+    TreeInfo treeInfo(cout);
+    _ast.TraverseBegin(treeInfo);
+    for (size_t index = 0; index < _traversalStack.Count(); ++index)
+    {
+        Declaration::Ptr element = _traversalStack.At(index);
+        element->TraverseBegin(treeInfo);
+        element->TraverseEnd(treeInfo);
+    }
+    _ast.TraverseEnd(treeInfo);
 }
 
 } // namespace CPPParser

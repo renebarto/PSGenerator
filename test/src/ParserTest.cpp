@@ -45,6 +45,12 @@ TEST_FIXTURE(ParserTest, Empty)
     ast.GenerateCode(stream, 0);
     std::string actual = stream.str();
     EXPECT_EQ(expected, actual);
+
+    expected = "";
+    stream.str("");
+    parser.TraverseTree(stream);
+    actual = stream.str();
+    EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(ParserTest, SingleNamespace)
@@ -87,6 +93,14 @@ TEST_FIXTURE(ParserTest, SingleNamespace)
     std::ostringstream stream;
     ast.GenerateCode(stream, 0);
     std::string actual = stream.str();
+    EXPECT_EQ(expected, actual);
+
+    expected =
+        "namespace NS1 {\n"
+        "} // namespace NS1\n";
+    stream.str("");
+    parser.TraverseTree(stream);
+    actual = stream.str();
     EXPECT_EQ(expected, actual);
 }
 
@@ -148,6 +162,16 @@ TEST_FIXTURE(ParserTest, NestedNamespace)
     ast.GenerateCode(stream, 0);
     std::string actual = stream.str();
     EXPECT_EQ(expected, actual);
+
+//    expected =
+//        "namespace NS1 {\n"
+//        "    namespace NS2 {\n"
+//        "    } // namespace NS2\n"
+//        "} // namespace NS1\n";
+//    stream.str("");
+//    parser.TraverseTree(stream);
+//    actual = stream.str();
+//    EXPECT_EQ(expected, actual);
 }
 
 TEST_FIXTURE(ParserTest, AnonymousNamespace)

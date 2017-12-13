@@ -52,7 +52,7 @@ inline std::string ConvertString(const CXString & str)
 
 inline std::string Indent(int indent)
 {
-    return std::string(4 * indent, ' ');
+    return std::string(4 * ((indent < 0) ? 0 : indent), ' ');
 }
 
 std::string Trim(const std::string & input);

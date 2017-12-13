@@ -20,6 +20,8 @@ public:
     void Show(std::ostream & stream, int indent) const;
     void GenerateCode(std::ostream & stream, int indent) const;
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override;
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override;
     virtual bool Visit(IASTVisitor & visitor) const override;
 };
 

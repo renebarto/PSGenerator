@@ -27,6 +27,16 @@ bool VisitElement(IASTVisitor & visitor, std::shared_ptr<T> element)
     return false;
 }
 
+bool AST::TraverseBegin(IASTVisitor & visitor) const
+{
+    return visitor.Enter(*this);
+}
+
+bool AST::TraverseEnd(IASTVisitor & visitor) const
+{
+    return visitor.Leave(*this);
+}
+
 bool AST::Visit(IASTVisitor & visitor) const
 {
     bool ok = true;

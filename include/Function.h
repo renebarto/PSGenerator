@@ -99,6 +99,14 @@ public:
     {
     }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;
@@ -124,6 +132,14 @@ public:
     {
     }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;
@@ -150,6 +166,14 @@ public:
     {
     }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;
@@ -176,6 +200,14 @@ public:
     {
     }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;
@@ -205,6 +237,14 @@ public:
 
     const std::vector<std::string> & TemplateParameters() const { return _templateParameters; }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;

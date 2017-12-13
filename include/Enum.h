@@ -29,15 +29,6 @@ public:
     const std::string & Name() const { return _name; }
     long long Value() const { return _value; }
 
-    void Show(std::ostream & stream, int indent) const
-    {
-        stream << Indent(indent) << Name() << " = " << _value << std::endl;
-    }
-    void GenerateCode(std::ostream & stream, int indent) const
-    {
-        stream << Indent(indent) << Name() << " = " << _value << "," << std::endl;
-    }
-
 private:
     std::string _name;
     long long _value;
@@ -61,6 +52,14 @@ public:
     const std::string & Type() const { return _type; }
     const EnumConstantList & Values() const { return _values; }
 
+    virtual bool TraverseBegin(IASTVisitor & visitor) const override
+    {
+        return visitor.Enter(*this);
+    }
+    virtual bool TraverseEnd(IASTVisitor & visitor) const override
+    {
+        return visitor.Leave(*this);
+    }
     virtual bool Visit(IASTVisitor & visitor) const override
     {
         bool ok = true;
