@@ -105,12 +105,13 @@ private:
     std::string _path;
     std::string _fileName;
     AST _ast;
-    Traversal::Tree _traversalTree;
+    AST _traversalTree;
     CXCursor _token;
     CXCursor _parentToken;
     Stack<CXCursor> _stack;
-    Stack<Declaration::Ptr> _traversalStack;
+    Stack<CXCursor> _traversalStack;
     TokenLookupMap _tokenLookupMap;
+    TokenLookupMap _tokenLookupMapTraversal;
     TypeLookupMap _typeLookupMap;
 
     bool FindNamespaceByName(Declaration::Ptr parent, const std::string & name, Namespace::Ptr & result);
@@ -139,7 +140,7 @@ private:
     void AddAccessSpecifier(Declaration::Ptr parent, CXCursor token);
     void AddInclude(Declaration::Ptr parent, CXCursor token);
 
-    void UpdateStack(Declaration::Ptr object);
+    void UpdateStack();
     void ShowStack();
     void ShowTraversalStack();
 };

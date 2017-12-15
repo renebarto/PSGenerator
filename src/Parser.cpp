@@ -43,6 +43,7 @@ Parser::Parser(const std::string & path)
     , _stack()
     , _traversalStack()
     , _tokenLookupMap()
+    , _tokenLookupMapTraversal()
     , _typeLookupMap()
 {
 
@@ -419,10 +420,11 @@ void Parser::AddNamespace(Declaration::Ptr parent, CXCursor token)
         std::string name = ConvertString(clang_getCursorSpelling(token));
         object = make_shared<Namespace>(parent, name);
     }
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();
+    Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
     if (addNewObject)
     {
-        Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
         if (parentContainer != nullptr)
         {
             parentContainer->Add(object);
@@ -432,7 +434,14 @@ void Parser::AddNamespace(Declaration::Ptr parent, CXCursor token)
             _ast.Add(object);
         }
     }
-    _traversalTree.AddNode(make_shared<Traversal::Element>(object));
+    if (parentContainer != nullptr)
+    {
+        parentContainer->Add(object);
+    }
+    else
+    {
+        _traversalTree.Add(object);
+    }
     AddToMap(token, object);
     ShowTraversalStack();
 }
@@ -453,7 +462,8 @@ void Parser::AddClass(Declaration::Ptr parent, CXCursor token)
     {
         object = make_shared<Class>(parent, name, accessSpecifier);
     }
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     if (addNewObject)
     {
         Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
@@ -484,7 +494,8 @@ void Parser::AddStruct(Declaration::Ptr parent, CXCursor token)
     {
         object = make_shared<Struct>(parent, name, accessSpecifier);
     }
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     if (addNewObject)
     {
         Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
@@ -512,7 +523,8 @@ void Parser::AddEnum(Declaration::Ptr parent, CXCursor token)
     }
 
     auto object = make_shared<Enum>(parent, name, accessSpecifier, underlyingType);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
     if (parentContainer != nullptr)
     {
@@ -565,7 +577,8 @@ void Parser::AddConstructor(Declaration::Ptr parent, CXCursor token)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Constructor>(parent, name, accessSpecifier, parameters, flags);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -594,7 +607,8 @@ void Parser::AddDestructor(Declaration::Ptr parent, CXCursor token)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Destructor>(parent, name, accessSpecifier, flags);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -637,7 +651,8 @@ void Parser::AddMethod(Declaration::Ptr parent, CXCursor token)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Method>(parent, name, accessSpecifier, type, parameters, flags);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -697,7 +712,8 @@ void Parser::AddTypedef(Declaration::Ptr parent, CXCursor token)
     std::string type = ConvertString(clang_getTypeSpelling(clang_getTypedefDeclUnderlyingType(token)));
 
     auto object = make_shared<Typedef>(parent, name, accessSpecifier, type);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -718,7 +734,8 @@ void Parser::AddVariable(Declaration::Ptr parent, CXCursor token)
     std::string type = ConvertString(clang_getTypeSpelling(clang_getCursorType(token)));
 
     auto object = make_shared<Variable>(parent, name, accessSpecifier, type);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -739,7 +756,8 @@ void Parser::AddDataMember(Declaration::Ptr parent, CXCursor token)
     std::string type = ConvertString(clang_getTypeSpelling(clang_getCursorType(token)));
 
     auto object = make_shared<DataMember>(parent, name, accessSpecifier, type);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -781,7 +799,8 @@ void Parser::AddFunction(Declaration::Ptr parent, CXCursor token)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Function>(parent, name, type, parameters, flags);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -835,7 +854,8 @@ void Parser::AddFunctionTemplate(Declaration::Ptr parent, CXCursor token)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<FunctionTemplate>(parent, name, type, parameters, flags);
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -865,7 +885,8 @@ void Parser::AddClassTemplate(Declaration::Ptr parent, CXCursor token)
     {
         object = make_shared<ClassTemplate>(parent, name, accessSpecifier);
     }
-    UpdateStack(object);
+    auto element = make_shared<Traversal::Element>(object);
+    UpdateStack();;
     if (addNewObject)
     {
         Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
@@ -898,7 +919,7 @@ void Parser::AddTemplateTypeParameter(Declaration::Ptr parent, CXCursor token)
     cerr << "Panic! No function or class template" << endl;
 }
 
-void Parser::UpdateStack(Declaration::Ptr object)
+void Parser::UpdateStack()
 {
     ssize_t index = _stack.Find(_parentToken);
     if (index > 0)
@@ -915,7 +936,7 @@ void Parser::UpdateStack(Declaration::Ptr object)
     _stack.Push(_token);
 
     // Update traversal stack
-    index = _traversalStack.Find(object);
+    index = _traversalStack.Find(_parentToken);
     if (index > 0)
     {
         // Make sure parent cursor is at top of stack, remove any others
@@ -927,7 +948,7 @@ void Parser::UpdateStack(Declaration::Ptr object)
         // Make sure parent cursor is at top of stack, remove any others
         _traversalStack.RemoveTopElements(_traversalStack.Count());
     }
-    _traversalStack.Push(object);
+    _traversalStack.Push(_token);
 }
 
 void Parser::ShowStack()
@@ -999,15 +1020,51 @@ void Parser::ShowStack()
 void Parser::ShowTraversalStack()
 {
     cout << "Traversal stack contents:" << endl;
-    TreeInfo treeInfo(cout);
-    _ast.TraverseBegin(treeInfo);
-    for (size_t index = 0; index < _traversalStack.Count(); ++index)
+    for (size_t index = 0; index < _stack.Count(); ++index)
     {
-        Declaration::Ptr element = _traversalStack.At(index);
-        element->TraverseBegin(treeInfo);
-        element->TraverseEnd(treeInfo);
+        CXCursor element = _stack.At(index);
+        CXCursorKind kind = clang_getCursorKind(element);
+        CXString strKind = clang_getCursorKindSpelling(kind);
+        CXType type = clang_getCursorType(element);
+        CXString strType = clang_getTypeSpelling(type);
+        CXType underlyingType = clang_getTypedefDeclUnderlyingType(element);
+        CXString strUnderlyingType = clang_getTypeSpelling(underlyingType);
+        CXString strName = clang_getCursorSpelling(element);
+        if (kind < CXCursorKind::CXCursor_FirstInvalid)
+        {
+            switch (type.kind)
+            {
+                case CXTypeKind::CXType_Invalid:
+                    std::cout << setw(3) << index << " " << strKind << ": " << strName << std::endl;
+                    break;
+                case CXTypeKind::CXType_Typedef:
+                    std::cout << setw(3) << index << " " << strKind << ": " << strName << ": " << strUnderlyingType << std::endl;
+                    break;
+                default:
+                    std::cout << setw(3) << index << " " << strKind << ": " << strName << ": " << strType << std::endl;
+                    break;
+            }
+        }
+        else
+        {
+            std::cout << setw(3) << index << " " << strKind << ": " << strType << ": " << std::endl;
+        }
+
+        auto it = _tokenLookupMap.find(element);
+        Declaration::Ptr object = nullptr;
+        if (it != _tokenLookupMap.end())
+            object = it->second;
+        if (object == nullptr)
+        {
+            cout << "Panic";
+//            exit(EXIT_FAILURE);
+        }
+        else
+        {
+            TreeInfo treeInfo(cout);
+            object->Visit(treeInfo);
+        }
     }
-    _ast.TraverseEnd(treeInfo);
 }
 
 } // namespace CPPParser
