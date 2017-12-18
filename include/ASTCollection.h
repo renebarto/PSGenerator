@@ -19,10 +19,10 @@ namespace CPPParser
 
 using TokenLookupMap = std::map<CXCursor, Declaration::Ptr>;
 
-class AST : public Container
+class ASTCollection : public Container
 {
 public:
-    AST();
+    ASTCollection();
     virtual bool IsValid() const override { return false; }
     void Show(std::ostream & stream, int indent) const;
     void GenerateCode(std::ostream & stream, int indent) const;
@@ -34,6 +34,11 @@ public:
     virtual bool Visit(IASTVisitor & visitor) const override;
 
     Declaration::Ptr Find(CXCursor token) const;
+    bool FindNamespaceByName(Declaration::Ptr parent, const std::string & name, Namespace::Ptr & result);
+    bool FindClassByName(Declaration::Ptr parent, const std::string & name, Class::Ptr & result);
+    bool FindStructByName(Declaration::Ptr parent, const std::string & name, Struct::Ptr & result);
+    bool FindClassTemplateByName(Declaration::Ptr parent, const std::string & name, ClassTemplate::Ptr & result);
+    bool FindEnumByName(Declaration::Ptr parent, const std::string & name, Enum::Ptr & result);
 
     void AddToMap(CXCursor token, Declaration::Ptr object);
     Declaration::Ptr AddNamespace(CXCursor token, CXCursor parentToken);

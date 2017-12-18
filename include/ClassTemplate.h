@@ -16,13 +16,35 @@ public:
     using List = std::vector<Ptr>;
 
     ClassTemplate() = delete;
-    explicit ClassTemplate(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
-        : Object(std::move(parent), std::move(name), accessSpecifier, AccessSpecifier::Private)
+    explicit ClassTemplate(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier)
+        : Object(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier, AccessSpecifier::Private)
         , _templateParameters()
     {}
 
     const std::vector<std::string> & TemplateParameters() const { return _templateParameters; }
 
+    virtual std::string QualifiedDescription() const override { return "class " + QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result = "template<";
+        bool firstTemplateParameter = true;
+        for (auto const & parameter : TemplateParameters())
+        {
+            if (!firstTemplateParameter)
+            {
+                result += ", ";
+            }
+            result += "class " + parameter;
+            firstTemplateParameter = false;
+        }
+        result += "> ";
+        if (Parent() != nullptr)
+        {
+            result += Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);

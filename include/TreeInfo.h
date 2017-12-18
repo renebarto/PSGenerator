@@ -11,6 +11,7 @@
 #include <include/Struct.h>
 #include <include/ClassTemplate.h>
 #include <include/Namespace.h>
+#include <include/PreprocessorDirectives.h>
 
 using namespace std;
 
@@ -65,6 +66,23 @@ public:
         return true;
     }
 
+    virtual bool Enter(const ASTCollection &) override
+    {
+        _namespaceNesting = 0;
+        _indent = 0;
+        _stream << Indent(_indent) << "ASTCollection begin" << endl;
+        ++_indent;
+        EnterGlobalNamespace();
+        return true;
+    }
+    virtual bool Leave(const ASTCollection &) override
+    {
+        LeaveGlobalNamespace();
+        --_indent;
+        _stream << Indent(_indent) << "ASTCollection end" << endl;
+        return true;
+    }
+
     virtual bool Enter(const Typedef & element) override
     {
         _stream << Indent(_indent) << "Typedef " << element.Name() << ": " << element.Type() << endl;
@@ -87,7 +105,6 @@ public:
 
     virtual bool Enter(const Enum & element) override
     {
-        TRACE2(__func__, "Enum", element.Name());
         _stream << Indent(_indent) << "Enum " << (element.Name().empty() ? "<anonymous>" : element.Name());
         if (element.Type().empty())
         {
@@ -103,7 +120,6 @@ public:
     }
     virtual bool Leave(const Enum & element) override
     {
-        TRACE2(__func__, "Enum", element.Name());
         --_indent;
         _stream << Indent(_indent) << "Enum end " << (element.Name().empty() ? "<anonymous>" : element.Name()) << endl;
         return true;
@@ -349,6 +365,76 @@ public:
         _stream << Indent(_indent) << "Namespace end " << (element.Name().empty() ? "<anonymous>" : element.Name()) << endl;
         if (_namespaceNesting == 0)
             EnterGlobalNamespace();
+        return true;
+    }
+
+    virtual bool Enter(const IncludeDirective & element) override
+    {
+        _stream << Indent(_indent) << "Include "
+                << (element.IncludeType() == IncludeSpecifier::Local ? '"' : '<')
+                << element.Name()
+                << (element.IncludeType() == IncludeSpecifier::Local ? '"' : '>')
+                << endl;
+        return true;
+    }
+    virtual bool Leave(const IncludeDirective & element) override
+    {
+        return true;
+    }
+
+    virtual bool Enter(const IfdefDirective & element) override
+    {
+        _stream << Indent(_indent) << "Ifdef "
+                << element.Name()
+                << endl;
+        ++_indent;
+        return true;
+    }
+    virtual bool Leave(const IfdefDirective & element) override
+    {
+        --_indent;
+        _stream << Indent(_indent) << "Endif"
+                << endl;
+        return true;
+    }
+
+    virtual bool Enter(const IfDirective & element) override
+    {
+        _stream << Indent(_indent) << "If "
+                << element.Name()
+                << endl;
+        ++_indent;
+        return true;
+    }
+    virtual bool Leave(const IfDirective & element) override
+    {
+        --_indent;
+        _stream << Indent(_indent) << "Endif"
+                << endl;
+        return true;
+    }
+
+    virtual bool Enter(const DefineDirective & element) override
+    {
+        _stream << Indent(_indent) << "Define "
+                << element.Name()
+                << endl;
+        return true;
+    }
+    virtual bool Leave(const DefineDirective & element) override
+    {
+        return true;
+    }
+
+    virtual bool Enter(const UndefDirective & element) override
+    {
+        _stream << Indent(_indent) << "Undef "
+                << element.Name()
+                << endl;
+        return true;
+    }
+    virtual bool Leave(const UndefDirective & element) override
+    {
         return true;
     }
 

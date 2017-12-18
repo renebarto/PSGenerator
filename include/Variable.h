@@ -16,9 +16,9 @@ public:
     using List = std::vector<Ptr>;
 
     VariableBase() = delete;
-    explicit VariableBase(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit VariableBase(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                           std::string type)
-        : Declaration(std::move(parent), std::move(name), accessSpecifier)
+        : Declaration(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier)
         , _type(std::move(type))
     {
     }
@@ -36,12 +36,23 @@ public:
     using List = std::vector<Ptr>;
 
     Variable() = delete;
-    explicit Variable(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit Variable(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                       std::string type)
-        : VariableBase(std::move(parent), std::move(name), accessSpecifier, std::move(type))
+        : VariableBase(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier, std::move(type))
     {
     }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result = Type() + " ";
+        if (Parent() != nullptr)
+        {
+            result += Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);
@@ -68,12 +79,23 @@ public:
     using List = std::vector<Ptr>;
 
     DataMember() = delete;
-    explicit DataMember(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit DataMember(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                         std::string type)
-        : VariableBase(std::move(parent), std::move(name), accessSpecifier, std::move(type))
+        : VariableBase(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier, std::move(type))
     {
     }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result = Type() + " ";
+        if (Parent() != nullptr)
+        {
+            result += Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);

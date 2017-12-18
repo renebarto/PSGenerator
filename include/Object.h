@@ -4,6 +4,7 @@
 #include "include/Container.h"
 #include "include/Function.h"
 #include "include/Inheritance.h"
+#include "include/Variable.h"
 
 namespace CPPParser
 {
@@ -16,12 +17,13 @@ public:
     using List = std::vector<Ptr>;
 
     Object() = delete;
-    explicit Object(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit Object(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                     AccessSpecifier defaultInternalAccessSpecifier)
-        : Container(std::move(parent), std::move(name), accessSpecifier)
+        : Container(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier)
           , _constructors()
           , _destructors()
           , _methods()
+          , _dataMembers()
           , _baseTypes()
           , _currentAccessSpecifier(defaultInternalAccessSpecifier)
     {
@@ -30,6 +32,7 @@ public:
     const PtrList<Constructor> & Constructors() const { return _constructors; }
     const PtrList<Destructor> & Destructors() const { return _destructors; }
     const PtrList<Method> & Methods() const { return _methods; }
+    const PtrList<DataMember> & DataMembers() const { return _dataMembers; }
     const std::vector<Inheritance::Ptr> & BaseTypes() const { return _baseTypes; }
 
     bool VisitChildren(IASTVisitor & visitor) const
@@ -41,7 +44,7 @@ public:
         return ok;
     }
 
-    virtual void Add(const Declaration::Ptr & value) override;
+    virtual void Add(const Element::Ptr & value) override;
     void AddBase(const Inheritance::Ptr & value);
     void SetAccessSpecifier(AccessSpecifier accessSpecifier);
 
@@ -49,12 +52,14 @@ private:
     std::vector<Constructor::Ptr> _constructors;
     std::vector<Destructor::Ptr> _destructors;
     std::vector<Method::Ptr> _methods;
+    std::vector<DataMember::Ptr> _dataMembers;
     std::vector<Inheritance::Ptr> _baseTypes;
     AccessSpecifier _currentAccessSpecifier;
 
     void AddConstructor(const Constructor::Ptr & value);
     void AddDestructor(const Destructor::Ptr & value);
     void AddMethod(const Method::Ptr & value);
+    void AddDataMember(const DataMember::Ptr & value);
 };
 
 } // namespace CPPParser

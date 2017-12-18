@@ -42,7 +42,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleNamespace)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Namespace>(Declaration::WeakPtr(), "NS"));
+    ast.Add(make_shared<Namespace>(Element::WeakPtr(), SourceLocation(), "NS"));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -59,7 +59,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleNamespaceAnonymous)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Namespace>(Declaration::WeakPtr(), ""));
+    ast.Add(make_shared<Namespace>(Element::WeakPtr(), SourceLocation(), ""));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -76,7 +76,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleClass)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Class>(Declaration::WeakPtr(), "A", AccessSpecifier::Public));
+    ast.Add(make_shared<Class>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -93,10 +93,10 @@ TEST_FIXTURE(CodeGeneratorTest, SingleClassWithMethods)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aClass = make_shared<Class>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aClass->Add(make_shared<Constructor>(aClass, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aClass->Add(make_shared<Destructor>(aClass, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aClass->Add(make_shared<Method>(aClass, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
+    auto aClass = make_shared<Class>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aClass->Add(make_shared<Constructor>(aClass, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aClass->Add(make_shared<Destructor>(aClass, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aClass->Add(make_shared<Method>(aClass, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
     ast.Add(aClass);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -117,11 +117,11 @@ TEST_FIXTURE(CodeGeneratorTest, SingleClassWithMethodsAndVariables)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aClass = make_shared<Class>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aClass->Add(make_shared<Constructor>(aClass, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aClass->Add(make_shared<Destructor>(aClass, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aClass->Add(make_shared<Method>(aClass, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
-    aClass->Add(make_shared<DataMember>(aClass, "X", AccessSpecifier::Public, "int"));
+    auto aClass = make_shared<Class>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aClass->Add(make_shared<Constructor>(aClass, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aClass->Add(make_shared<Destructor>(aClass, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aClass->Add(make_shared<Method>(aClass, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
+    aClass->Add(make_shared<DataMember>(aClass, SourceLocation(), "X", AccessSpecifier::Public, "int"));
     ast.Add(aClass);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -143,7 +143,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleStruct)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Struct>(Declaration::WeakPtr(), "A", AccessSpecifier::Public));
+    ast.Add(make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -160,10 +160,10 @@ TEST_FIXTURE(CodeGeneratorTest, SingleStructWithMethods)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aStruct = make_shared<Struct>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aStruct->Add(make_shared<Constructor>(aStruct, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aStruct->Add(make_shared<Destructor>(aStruct, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aStruct->Add(make_shared<Method>(aStruct, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
+    auto aStruct = make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aStruct->Add(make_shared<Constructor>(aStruct, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aStruct->Add(make_shared<Destructor>(aStruct, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aStruct->Add(make_shared<Method>(aStruct, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
     ast.Add(aStruct);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -184,16 +184,16 @@ TEST_FIXTURE(CodeGeneratorTest, StructInheritance)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aStructA = make_shared<Struct>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aStructA->Add(make_shared<Constructor>(aStructA, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aStructA->Add(make_shared<Destructor>(aStructA, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aStructA->Add(make_shared<Method>(aStructA, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::PureVirtual));
+    auto aStructA = make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aStructA->Add(make_shared<Constructor>(aStructA, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aStructA->Add(make_shared<Destructor>(aStructA, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aStructA->Add(make_shared<Method>(aStructA, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::PureVirtual));
     ast.Add(aStructA);
-    auto aStructB = make_shared<Struct>(Declaration::WeakPtr(), "B", AccessSpecifier::Public);
-    aStructB->Add(make_shared<Constructor>(aStructB, "B", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aStructB->Add(make_shared<Destructor>(aStructB, "~B", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aStructB->Add(make_shared<Method>(aStructB, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags(FunctionFlags::Virtual | FunctionFlags::Override)));
-    aStructB->AddBase(make_shared<Inheritance>(aStructB, "A", AccessSpecifier::Public, aStructA, false));
+    auto aStructB = make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "B", AccessSpecifier::Public);
+    aStructB->Add(make_shared<Constructor>(aStructB, SourceLocation(), "B", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aStructB->Add(make_shared<Destructor>(aStructB, SourceLocation(), "~B", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aStructB->Add(make_shared<Method>(aStructB, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags(FunctionFlags::Virtual | FunctionFlags::Override)));
+    aStructB->AddBase(make_shared<Inheritance>(aStructB, SourceLocation(), "A", AccessSpecifier::Public, aStructA, false));
     ast.Add(aStructB);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -219,7 +219,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleEnum)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "A", AccessSpecifier::Public, "");
+    auto aEnum = make_shared<Enum>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public, "");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -239,7 +239,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleEnumAnonymous)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "", AccessSpecifier::Public, "");
+    auto aEnum = make_shared<Enum>(Element::WeakPtr(), SourceLocation(), "", AccessSpecifier::Public, "");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -259,7 +259,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleEnumWithBaseType)
     CodeGenerator visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "A", AccessSpecifier::Public, "short");
+    auto aEnum = make_shared<Enum>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public, "short");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -279,7 +279,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleVariable)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Variable>(Declaration::WeakPtr(), "x", AccessSpecifier::Public, "const int"));
+    ast.Add(make_shared<Variable>(Element::WeakPtr(), SourceLocation(), "x", AccessSpecifier::Public, "const int"));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -295,7 +295,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleFunction)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Function>(Declaration::WeakPtr(), "x", "int",
+    ast.Add(make_shared<Function>(Element::WeakPtr(), SourceLocation(), "x", "int",
                                   ParameterList{Parameter("y", "int")}, FunctionFlags::None));
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -312,7 +312,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleFunctionStatic)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Function>(Declaration::WeakPtr(), "x", "int",
+    ast.Add(make_shared<Function>(Element::WeakPtr(), SourceLocation(), "x", "int",
                                   ParameterList{Parameter("y", "int")}, FunctionFlags::Static));
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -329,7 +329,7 @@ TEST_FIXTURE(CodeGeneratorTest, SingleFunctionInline)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Function>(Declaration::WeakPtr(), "x", "int",
+    ast.Add(make_shared<Function>(Element::WeakPtr(), SourceLocation(), "x", "int",
                                   ParameterList{Parameter("y", "int")}, FunctionFlags::Inline));
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -346,12 +346,44 @@ TEST_FIXTURE(CodeGeneratorTest, SingleTypedef)
     CodeGenerator visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Typedef>(Declaration::WeakPtr(), "x", AccessSpecifier::Invalid, "int"));
+    ast.Add(make_shared<Typedef>(Element::WeakPtr(), SourceLocation(), "x", AccessSpecifier::Invalid, "int"));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
     std::string expected =
         "typedef int x;\n";
+    std::string actual = stream.str();
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(CodeGeneratorTest, IncludeDirectiveLocal)
+{
+    std::ostringstream stream;
+    CodeGenerator visitor(stream);
+
+    AST ast;
+    ast.Add(make_shared<IncludeDirective>(Element::WeakPtr(), SourceLocation(), "Module.h", IncludeSpecifier::Local));
+
+    EXPECT_TRUE(ast.Visit(visitor));
+
+    std::string expected =
+        "#include \"Module.h\"\n";
+    std::string actual = stream.str();
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_FIXTURE(CodeGeneratorTest, IncludeDirectiveSystem)
+{
+    std::ostringstream stream;
+    CodeGenerator visitor(stream);
+
+    AST ast;
+    ast.Add(make_shared<IncludeDirective>(Element::WeakPtr(), SourceLocation(), "iostream", IncludeSpecifier::System));
+
+    EXPECT_TRUE(ast.Visit(visitor));
+
+    std::string expected =
+        "#include <iostream>\n";
     std::string actual = stream.str();
     EXPECT_EQ(expected, actual);
 }

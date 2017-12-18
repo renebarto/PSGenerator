@@ -12,6 +12,7 @@
 #include <include/Struct.h>
 #include <include/ClassTemplate.h>
 #include <include/Namespace.h>
+#include <include/PreprocessorDirectives.h>
 
 using namespace std;
 
@@ -29,43 +30,55 @@ public:
 
     virtual bool Enter(const AST &) override
     {
-        TRACE(__func__, "AST");
+//        TRACE(__func__, "AST");
         _indent = 0;
         return true;
     }
     virtual bool Leave(const AST &) override
     {
-        TRACE(__func__, "AST");
+//        TRACE(__func__, "AST");
+        return true;
+    }
+
+    virtual bool Enter(const ASTCollection &) override
+    {
+//        TRACE("ASTCollection");
+        _indent = 0;
+        return true;
+    }
+    virtual bool Leave(const ASTCollection &) override
+    {
+//        TRACE("ASTCollection");
         return true;
     }
 
     virtual bool Enter(const Typedef & element) override
     {
-        TRACE2(__func__, "Typedef", element.Name());
+//        TRACE2(__func__, "Typedef", element.Name());
         _stream << Indent(_indent) << "typedef " << element.Type() << " " << element.Name() << ";" << std::endl;
         return true;
     }
     virtual bool Leave(const Typedef & element) override
     {
-        TRACE2(__func__, "Typedef", element.Name());
+//        TRACE2(__func__, "Typedef", element.Name());
         return true;
     }
 
     virtual bool Enter(const EnumConstant & element) override
     {
-        TRACE2(__func__, "EnumConstant", element.Name());
+//        TRACE2(__func__, "EnumConstant", element.Name());
         _stream << Indent(_indent) << element.Name() << " = " << element.Value() << "," << std::endl;
         return true;
     }
     virtual bool Leave(const EnumConstant & element) override
     {
-        TRACE2(__func__, "EnumConstant", element.Name());
+//        TRACE2(__func__, "EnumConstant", element.Name());
         return true;
     }
 
     virtual bool Enter(const Enum & element) override
     {
-        TRACE2(__func__, "Enum", element.Name());
+//        TRACE2(__func__, "Enum", element.Name());
         _stream << Indent(_indent) << "enum "
                 << (element.Name().empty() ? "" : element.Name() + " ");
         if (!element.Type().empty())
@@ -78,7 +91,7 @@ public:
     }
     virtual bool Leave(const Enum & element) override
     {
-        TRACE2(__func__, "Enum", element.Name());
+//        TRACE2(__func__, "Enum", element.Name());
         --_indent;
         _stream << Indent(_indent) << "}; // enum "
                 << (element.Name().empty() ? "<anonymous>" : element.Name()) << std::endl;
@@ -141,51 +154,51 @@ public:
 
     virtual bool Enter(const Constructor & element) override
     {
-        TRACE2(__func__, "Constructor", element.Name());
+//        TRACE2(__func__, "Constructor", element.Name());
         return EnterFunctionBase(element);
     }
     virtual bool Leave(const Constructor & element) override
     {
-        TRACE2(__func__, "Constructor", element.Name());
+//        TRACE2(__func__, "Constructor", element.Name());
         return LeaveFunctionBase(element);
     }
 
     virtual bool Enter(const Destructor & element) override
     {
-        TRACE2(__func__, "Destructor", element.Name());
+//        TRACE2(__func__, "Destructor", element.Name());
         return EnterFunctionBase(element);
     }
     virtual bool Leave(const Destructor & element) override
     {
-        TRACE2(__func__, "Destructor", element.Name());
+//        TRACE2(__func__, "Destructor", element.Name());
         return LeaveFunctionBase(element);
     }
 
     virtual bool Enter(const Method & element) override
     {
-        TRACE2(__func__, "Method", element.Name());
+//        TRACE2(__func__, "Method", element.Name());
         return EnterFunctionBase(element);
     }
     virtual bool Leave(const Method & element) override
     {
-        TRACE2(__func__, "Method", element.Name());
+//        TRACE2(__func__, "Method", element.Name());
         return LeaveFunctionBase(element);
     }
 
     virtual bool Enter(const Function & element) override
     {
-        TRACE2(__func__, "Function", element.Name());
+//        TRACE2(__func__, "Function", element.Name());
         return EnterFunctionBase(element);
     }
     virtual bool Leave(const Function & element) override
     {
-        TRACE2(__func__, "Function", element.Name());
+//        TRACE2(__func__, "Function", element.Name());
         return LeaveFunctionBase(element);
     }
 
     virtual bool Enter(const FunctionTemplate & element) override
     {
-        TRACE2(__func__, "FunctionTemplate", element.Name());
+//        TRACE2(__func__, "FunctionTemplate", element.Name());
         _stream << Indent(_indent);
         _stream << "template<";
         bool firstTemplateParameter = true;
@@ -237,32 +250,32 @@ public:
     }
     virtual bool Leave(const FunctionTemplate & element) override
     {
-        TRACE2(__func__, "FunctionTemplate", element.Name());
+//        TRACE2(__func__, "FunctionTemplate", element.Name());
         return true;
     }
 
     virtual bool Enter(const Variable & element) override
     {
-        TRACE2(__func__, "Variable", element.Name());
+//        TRACE2(__func__, "Variable", element.Name());
         _stream << Indent(_indent) << element.Type() << " " << element.Name() << ";" << endl;
 
         return true;
     }
     virtual bool Leave(const Variable & element) override
     {
-        TRACE2(__func__, "Variable", element.Name());
+//        TRACE2(__func__, "Variable", element.Name());
         return true;
     }
 
     virtual bool Enter(const DataMember & element) override
     {
-        TRACE2(__func__, "DataMember", element.Name());
+//        TRACE2(__func__, "DataMember", element.Name());
         _stream << Indent(_indent) << element.Type() << " " << element.Name() << ";" << endl;
         return true;
     }
     virtual bool Leave(const DataMember & element) override
     {
-        TRACE2(__func__, "DataMember", element.Name());
+//        TRACE2(__func__, "DataMember", element.Name());
         return true;
     }
 
@@ -288,7 +301,7 @@ public:
 
     virtual bool Enter(const Class & element) override
     {
-        TRACE2(__func__, "Class", element.Name());
+//        TRACE2(__func__, "Class", element.Name());
         _stream << Indent(_indent) << "class " << element.Name();
         ObjectInheritance(element);
         _stream << " {" << std::endl;
@@ -297,7 +310,7 @@ public:
     }
     virtual bool Leave(const Class & element) override
     {
-        TRACE2(__func__, "Class", element.Name());
+//        TRACE2(__func__, "Class", element.Name());
         --_indent;
         _stream << Indent(_indent) << "}; // class " << element.Name() << std::endl;
         return true;
@@ -305,7 +318,7 @@ public:
 
     virtual bool Enter(const Struct & element) override
     {
-        TRACE2(__func__, "Struct", element.Name());
+//        TRACE2(__func__, "Struct", element.Name());
         _stream << Indent(_indent) << "struct " << element.Name();
         ObjectInheritance(element);
         _stream << " {" << std::endl;
@@ -314,7 +327,7 @@ public:
     }
     virtual bool Leave(const Struct & element) override
     {
-        TRACE2(__func__, "Struct", element.Name());
+//        TRACE2(__func__, "Struct", element.Name());
         --_indent;
         _stream << Indent(_indent) << "}; // struct " << element.Name() << std::endl;
         return true;
@@ -322,7 +335,7 @@ public:
 
     virtual bool Enter(const ClassTemplate & element) override
     {
-        TRACE2(__func__, "ClassTemplate", element.Name());
+//        TRACE2(__func__, "ClassTemplate", element.Name());
         _stream << Indent(_indent);
         _stream << "template<";
         bool firstTemplateParameter = true;
@@ -345,7 +358,7 @@ public:
 
     virtual bool Leave(const ClassTemplate & element) override
     {
-        TRACE2(__func__, "ClassTemplate", element.Name());
+//        TRACE2(__func__, "ClassTemplate", element.Name());
         --_indent;
         _stream << Indent(_indent) << "}; // class " << element.Name() << std::endl;
         return true;
@@ -353,16 +366,96 @@ public:
 
     virtual bool Enter(const Namespace & element) override
     {
-        TRACE2(__func__, "Namespace", element.Name());
+//        TRACE2(__func__, "Namespace", element.Name());
         _stream << Indent(_indent) << "namespace " << (element.Name().empty() ? "" : element.Name() + " ") << "{" << endl;
         ++_indent;
         return true;
     }
     virtual bool Leave(const Namespace & element) override
     {
-        TRACE2(__func__, "Namespace", element.Name());
+//        TRACE2(__func__, "Namespace", element.Name());
         --_indent;
         _stream << Indent(_indent) << "} // namespace " << (element.Name().empty() ? "<anonymous>" : element.Name()) << endl;
+        return true;
+    }
+
+    virtual bool Enter(const IncludeDirective & element) override
+    {
+//        TRACE(__func__, "Include");
+        _stream << Indent(_indent) << "#include "
+                << (element.IncludeType() == IncludeSpecifier::Local ? '"' : '<')
+                << element.Name()
+                << (element.IncludeType() == IncludeSpecifier::Local ? '"' : '>')
+                << endl;
+        return true;
+    }
+    virtual bool Leave(const IncludeDirective & element) override
+    {
+//        TRACE(__func__, "Include");
+        return true;
+    }
+
+    virtual bool Enter(const IfdefDirective & element) override
+    {
+//        TRACE(__func__, "Ifdef");
+        _stream << Indent(_indent) << "Ifdef "
+                << element.Name()
+                << endl;
+        ++_indent;
+        return true;
+    }
+    virtual bool Leave(const IfdefDirective & element) override
+    {
+//        TRACE(__func__, "Ifdef");
+        --_indent;
+        _stream << Indent(_indent) << "Endif"
+                << endl;
+        return true;
+    }
+
+    virtual bool Enter(const IfDirective & element) override
+    {
+//        TRACE(__func__, "If");
+        _stream << Indent(_indent) << "If "
+                << element.Name()
+                << endl;
+        ++_indent;
+        return true;
+    }
+    virtual bool Leave(const IfDirective & element) override
+    {
+//        TRACE(__func__, "If");
+        --_indent;
+        _stream << Indent(_indent) << "Endif"
+                << endl;
+        return true;
+    }
+
+    virtual bool Enter(const DefineDirective & element) override
+    {
+//        TRACE(__func__, "Define");
+        _stream << Indent(_indent) << "Define "
+                << element.Name()
+                << endl;
+        return true;
+    }
+    virtual bool Leave(const DefineDirective & element) override
+    {
+//        TRACE(__func__, "Define");
+        return true;
+    }
+
+    virtual bool Enter(const UndefDirective & element) override
+    {
+//        TRACE(__func__, "Undef");
+        _stream << Indent(_indent) << "Undef "
+                << element.Name()
+                << endl;
+        return true;
+    }
+    virtual bool Leave(const UndefDirective & element) override
+    {
+//        TRACE(__func__, "Undef");
         return true;
     }
 

@@ -4,6 +4,8 @@ namespace CPPParser
 {
 
 class AST;
+class ASTCollection;
+// Type declarations
 class Typedef;
 class EnumConstant;
 class Enum;
@@ -20,6 +22,14 @@ class Class;
 class Struct;
 class ClassTemplate;
 class Namespace;
+// Preprocessor directives
+class IncludeDirective;
+class IfdefDirective;
+class IfDirective;
+class DefineDirective;
+class UndefDirective;
+
+// Statements
 
 class IASTVisitor
 {
@@ -29,6 +39,10 @@ public:
     virtual bool Enter(const AST &) = 0;
     virtual bool Leave(const AST &) = 0;
 
+    virtual bool Enter(const ASTCollection &) = 0;
+    virtual bool Leave(const ASTCollection &) = 0;
+
+    // Type declarations
     virtual bool Enter(const Typedef &) = 0;
     virtual bool Leave(const Typedef &) = 0;
 
@@ -70,6 +84,24 @@ public:
 
     virtual bool Enter(const Namespace &) = 0;
     virtual bool Leave(const Namespace &) = 0;
+
+    // Preprocessor
+    virtual bool Enter(const IncludeDirective &) = 0;
+    virtual bool Leave(const IncludeDirective &) = 0;
+
+    virtual bool Enter(const IfdefDirective &) = 0;
+    virtual bool Leave(const IfdefDirective &) = 0;
+
+    virtual bool Enter(const IfDirective &) = 0;
+    virtual bool Leave(const IfDirective &) = 0;
+
+    virtual bool Enter(const DefineDirective &) = 0;
+    virtual bool Leave(const DefineDirective &) = 0;
+
+    virtual bool Enter(const UndefDirective &) = 0;
+    virtual bool Leave(const UndefDirective &) = 0;
+
+    // Statements
 
 };
 

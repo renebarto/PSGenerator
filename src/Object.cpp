@@ -9,7 +9,7 @@ using namespace Utility;
 namespace CPPParser
 {
 
-void Object::Add(const Declaration::Ptr & value)
+void Object::Add(const Element::Ptr & value)
 {
     Container::Add(value);
     Constructor::Ptr aConstructor = dynamic_pointer_cast<Constructor>(value);
@@ -30,6 +30,12 @@ void Object::Add(const Declaration::Ptr & value)
         AddMethod(aMethod);
         return;
     }
+    DataMember::Ptr aDataMember = dynamic_pointer_cast<DataMember>(value);
+    if (aDataMember != nullptr)
+    {
+        AddDataMember(aDataMember);
+        return;
+    }
 }
 
 void Object::AddConstructor(const Constructor::Ptr & value)
@@ -45,6 +51,11 @@ void Object::AddDestructor(const Destructor::Ptr & value)
 void Object::AddMethod(const Method::Ptr & value)
 {
     _methods.push_back(value);
+}
+
+void Object::AddDataMember(const DataMember::Ptr & value)
+{
+    _dataMembers.push_back(value);
 }
 
 void Object::AddBase(const Inheritance::Ptr & value)

@@ -1,4 +1,4 @@
-#include "include/AST.h"
+#include "include/ASTCollection.h"
 
 #include <fstream>
 #include <iomanip>
@@ -15,26 +15,26 @@ using namespace Utility;
 namespace CPPParser
 {
 
-AST::AST()
-    : Container(WeakPtr(), SourceLocation(), "AST", AccessSpecifier::Invalid)
+ASTCollection::ASTCollection()
+    : Container(WeakPtr(), SourceLocation(), "ASTCollection", AccessSpecifier::Invalid)
     , _stack()
     , _tokenLookupMap()
 {
 }
 
-bool AST::TraverseBegin(IASTVisitor & visitor) const
+bool ASTCollection::TraverseBegin(IASTVisitor & visitor) const
 {
     return visitor.Enter(*this);
 }
 
-bool AST::TraverseEnd(IASTVisitor & visitor) const
+bool ASTCollection::TraverseEnd(IASTVisitor & visitor) const
 {
     return visitor.Leave(*this);
 }
 
-bool AST::Visit(IASTVisitor & visitor) const
+bool ASTCollection::Visit(IASTVisitor & visitor) const
 {
-   bool ok = true;
+    bool ok = true;
     if (!visitor.Enter(*this))
         ok = false;
     if (!VisitChildren(visitor))
@@ -44,19 +44,19 @@ bool AST::Visit(IASTVisitor & visitor) const
     return ok;
 }
 
-void AST::Show(std::ostream & stream, int indent) const
+void ASTCollection::Show(std::ostream & stream, int indent) const
 {
     TreeInfo treeInfo(stream);
     Visit(treeInfo);
 }
 
-void AST::GenerateCode(std::ostream & stream, int indent) const
+void ASTCollection::GenerateCode(std::ostream & stream, int indent) const
 {
     CodeGenerator codeGenerator(stream);
     Visit(codeGenerator);
 }
 
-Declaration::Ptr AST::Find(CXCursor token) const
+Declaration::Ptr ASTCollection::Find(CXCursor token) const
 {
     auto it = _tokenLookupMap.find(token);
     Declaration::Ptr object = nullptr;
@@ -65,44 +65,86 @@ Declaration::Ptr AST::Find(CXCursor token) const
     return object;
 }
 
-void AST::AddToMap(CXCursor token, Declaration::Ptr object)
+bool ASTCollection::FindNamespaceByName(Declaration::Ptr parent, const std::string & name, Namespace::Ptr & result)
+{
+    result = {};
+    if (parent == nullptr)
+        return FindNamespace(name, result);
+    auto parentContainer = dynamic_pointer_cast<Container>(parent);
+    if (parentContainer != nullptr)
+        return parentContainer->FindNamespace(name, result);
+    return false;
+}
+
+bool ASTCollection::FindClassByName(Declaration::Ptr parent, const std::string & name, Class::Ptr & result)
+{
+    result = {};
+    if (parent == nullptr)
+        return FindClass(name, result);
+    auto parentContainer = dynamic_pointer_cast<Container>(parent);
+    if (parentContainer != nullptr)
+        return parentContainer->FindClass(name, result);
+    return false;
+}
+
+bool ASTCollection::FindStructByName(Declaration::Ptr parent, const std::string & name, Struct::Ptr & result)
+{
+    result = {};
+    if (parent == nullptr)
+        return FindStruct(name, result);
+    auto parentContainer = dynamic_pointer_cast<Container>(parent);
+    if (parentContainer != nullptr)
+        return parentContainer->FindStruct(name, result);
+    return false;
+}
+
+bool ASTCollection::FindClassTemplateByName(Declaration::Ptr parent, const std::string & name, ClassTemplate::Ptr & result)
+{
+    result = {};
+    if (parent == nullptr)
+        return FindClassTemplate(name, result);
+    auto parentContainer = dynamic_pointer_cast<Container>(parent);
+    if (parentContainer != nullptr)
+        return parentContainer->FindClassTemplate(name, result);
+    return false;
+}
+
+bool ASTCollection::FindEnumByName(Declaration::Ptr parent, const std::string & name, Enum::Ptr & result)
+{
+    result = {};
+    if (parent == nullptr)
+        return FindEnum(name, result);
+    auto parentContainer = dynamic_pointer_cast<Container>(parent);
+    if (parentContainer != nullptr)
+        return parentContainer->FindEnum(name, result);
+    return false;
+}
+
+void ASTCollection::AddToMap(CXCursor token, Declaration::Ptr object)
 {
     _tokenLookupMap.insert({token, object});
 }
 
-Declaration::Ptr AST::AddNamespace(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddNamespace(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
-    Declaration::Ptr object;
+    Namespace::Ptr object;
     std::string name = ConvertString(clang_getCursorSpelling(token));
-    ssize_t parentPosition = _stack.Find(parentToken);
-    if (parentPosition > 0)
+    bool addNewObject = true;
+    if (FindNamespaceByName(parent, name, object))
     {
-        // Our parent is in the stack and not on top
-        CXCursor currentParentsChild = _stack.At(static_cast<size_t>(parentPosition - 1));
-        if ((token.kind == currentParentsChild.kind) &&
-            (name == ConvertString(clang_getCursorSpelling(currentParentsChild))))
-        {
-            // The top of the stack (after correction) is the same kind and has the same name, so this must be the same token
-            object = Find(currentParentsChild);
-        }
+        // If it already exists, we have a duplicate with a new token, and the same object with the new token
+        cout << "Namespace already exists." << endl;
+        addNewObject = false;
     }
-    else if ((parentPosition < 0) && (_stack.Count() > 0))
-    {
-        // Our parent is not on the stack, we may be in the global namespace
-        CXCursor currentTopOfStack = _stack.At(static_cast<size_t>(0));
-        if ((token.kind == currentTopOfStack.kind) &&
-            (name == ConvertString(clang_getCursorSpelling(currentTopOfStack))))
-        {
-            // The top of the stack (after correction) is the same kind and has the same name, so this must be the same token
-            object = Find(currentTopOfStack);
-        }
-    }
-    UpdateStack(token, parentToken);
-    if (object == nullptr)
+    else
     {
         object = make_shared<Namespace>(parent, SourceLocation(token), name);
-        Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
+    }
+    UpdateStack(token, parentToken);
+    Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
+    if (addNewObject)
+    {
         if (parentContainer != nullptr)
         {
             parentContainer->Add(object);
@@ -116,45 +158,73 @@ Declaration::Ptr AST::AddNamespace(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddClass(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddClass(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     Class::Ptr object;
     std::string name = ConvertString(clang_getCursorSpelling(token));
     AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
-    object = make_shared<Class>(parent, SourceLocation(token), name, accessSpecifier);
-    Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
-    if (parentContainer != nullptr)
+    bool addNewObject = true;
+    if (FindClassByName(parent, name, object))
     {
-        parentContainer->Add(object);
-    } else
+        // If it already exists, we have a duplicate with a new token, and the same object with the new token
+        cout << "Class already exists." << endl;
+        addNewObject = false;
+    }
+    else
     {
-        Add(object);
+        object = make_shared<Class>(parent, SourceLocation(token), name, accessSpecifier);
+    }
+    UpdateStack(token, parentToken);
+    if (addNewObject)
+    {
+        Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
+        if (parentContainer != nullptr)
+        {
+            parentContainer->Add(object);
+        } else
+        {
+            Add(object);
+        }
     }
     AddToMap(token, object);
     return object;
 }
 
-Declaration::Ptr AST::AddStruct(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddStruct(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     Struct::Ptr object;
     std::string name = ConvertString(clang_getCursorSpelling(token));
     AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
-    object = make_shared<Struct>(parent, SourceLocation(token), name, accessSpecifier);
-    Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
-    if (parentContainer != nullptr)
+    bool addNewObject = true;
+    if (FindStructByName(parent, name, object))
     {
-        parentContainer->Add(object);
-    } else
+        // If it already exists, we have a duplicate with a new token, and the same object with the new token
+        cout << "Struct already exists." << endl;
+        addNewObject = false;
+    }
+    else
     {
-        Add(object);
+        object = make_shared<Struct>(parent, SourceLocation(token), name, accessSpecifier);
+    }
+    UpdateStack(token, parentToken);
+    if (addNewObject)
+    {
+        Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
+        if (parentContainer != nullptr)
+        {
+            parentContainer->Add(object);
+        } else
+        {
+            Add(object);
+        }
     }
     AddToMap(token, object);
     return object;
 }
 
-Declaration::Ptr AST::AddConstructor(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddConstructor(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -181,6 +251,7 @@ Declaration::Ptr AST::AddConstructor(CXCursor token, CXCursor parentToken)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Constructor>(parent, SourceLocation(token), name, accessSpecifier, parameters, flags);
+    UpdateStack(token, parentToken);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -195,7 +266,7 @@ Declaration::Ptr AST::AddConstructor(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddDestructor(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddDestructor(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -211,6 +282,7 @@ Declaration::Ptr AST::AddDestructor(CXCursor token, CXCursor parentToken)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Destructor>(parent, SourceLocation(token), name, accessSpecifier, flags);
+    UpdateStack(token, parentToken);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -225,7 +297,7 @@ Declaration::Ptr AST::AddDestructor(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddMethod(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddMethod(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -255,6 +327,7 @@ Declaration::Ptr AST::AddMethod(CXCursor token, CXCursor parentToken)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Method>(parent, SourceLocation(token), name, accessSpecifier, type, parameters, flags);
+    UpdateStack(token, parentToken);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -269,7 +342,7 @@ Declaration::Ptr AST::AddMethod(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddDataMember(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddDataMember(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -277,6 +350,7 @@ Declaration::Ptr AST::AddDataMember(CXCursor token, CXCursor parentToken)
     std::string type = ConvertString(clang_getTypeSpelling(clang_getCursorType(token)));
 
     auto object = make_shared<DataMember>(parent, SourceLocation(token), name, accessSpecifier, type);
+    UpdateStack(token, parentToken);
     Object::Ptr parentObject = dynamic_pointer_cast<Object>(object->Parent());
     if (parentObject != nullptr)
     {
@@ -291,7 +365,7 @@ Declaration::Ptr AST::AddDataMember(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddEnum(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddEnum(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -305,6 +379,7 @@ Declaration::Ptr AST::AddEnum(CXCursor token, CXCursor parentToken)
     }
 
     auto object = make_shared<Enum>(parent, SourceLocation(token), name, accessSpecifier, underlyingType);
+    UpdateStack(token, parentToken);
     Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
     if (parentContainer != nullptr)
     {
@@ -318,7 +393,7 @@ Declaration::Ptr AST::AddEnum(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-void AST::AddEnumValue(CXCursor token, CXCursor parentToken)
+void ASTCollection::AddEnumValue(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     Enum::Ptr parentEnum = dynamic_pointer_cast<Enum>(parent);
@@ -333,7 +408,7 @@ void AST::AddEnumValue(CXCursor token, CXCursor parentToken)
     }
 }
 
-Declaration::Ptr AST::AddTypedef(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddTypedef(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -341,6 +416,7 @@ Declaration::Ptr AST::AddTypedef(CXCursor token, CXCursor parentToken)
     std::string type = ConvertString(clang_getTypeSpelling(clang_getTypedefDeclUnderlyingType(token)));
 
     auto object = make_shared<Typedef>(parent, SourceLocation(token), name, accessSpecifier, type);
+    UpdateStack(token, parentToken);
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -355,7 +431,7 @@ Declaration::Ptr AST::AddTypedef(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddVariable(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddVariable(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -363,6 +439,7 @@ Declaration::Ptr AST::AddVariable(CXCursor token, CXCursor parentToken)
     std::string type = ConvertString(clang_getTypeSpelling(clang_getCursorType(token)));
 
     auto object = make_shared<Variable>(parent, SourceLocation(token), name, accessSpecifier, type);
+    UpdateStack(token, parentToken);
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -377,7 +454,7 @@ Declaration::Ptr AST::AddVariable(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddFunction(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddFunction(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -406,6 +483,7 @@ Declaration::Ptr AST::AddFunction(CXCursor token, CXCursor parentToken)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<Function>(parent, SourceLocation(token), name, type, parameters, flags);
+    UpdateStack(token, parentToken);
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -420,7 +498,7 @@ Declaration::Ptr AST::AddFunction(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-void AST::AddBaseClass(CXCursor token, CXCursor parentToken, Declaration::Ptr baseType)
+void ASTCollection::AddBaseClass(CXCursor token, CXCursor parentToken, Declaration::Ptr baseType)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -450,7 +528,7 @@ void AST::AddBaseClass(CXCursor token, CXCursor parentToken, Declaration::Ptr ba
     }
 }
 
-Declaration::Ptr AST::AddFunctionTemplate(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddFunctionTemplate(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -479,6 +557,7 @@ Declaration::Ptr AST::AddFunctionTemplate(CXCursor token, CXCursor parentToken)
     flags = static_cast<FunctionFlags>(flags | ((clang_CXXMethod_isStatic(token) != 0) ? FunctionFlags::Static : 0));
 
     auto object = make_shared<FunctionTemplate>(parent, SourceLocation(token), name, type, parameters, flags);
+    UpdateStack(token, parentToken);
     Namespace::Ptr parentNamespace = dynamic_pointer_cast<Namespace>(object->Parent());
     if (parentNamespace != nullptr)
     {
@@ -493,26 +572,40 @@ Declaration::Ptr AST::AddFunctionTemplate(CXCursor token, CXCursor parentToken)
     return object;
 }
 
-Declaration::Ptr AST::AddClassTemplate(CXCursor token, CXCursor parentToken)
+Declaration::Ptr ASTCollection::AddClassTemplate(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     ClassTemplate::Ptr object;
     std::string name = ConvertString(clang_getCursorSpelling(token));
     AccessSpecifier accessSpecifier = ConvertAccessSpecifier(clang_getCXXAccessSpecifier(token));
-    object = make_shared<ClassTemplate>(parent, SourceLocation(token), name, accessSpecifier);
-    Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
-    if (parentContainer != nullptr)
+    bool addNewObject = true;
+    if (FindClassTemplateByName(parent, name, object))
     {
-        parentContainer->Add(object);
-    } else
+        // If it already exists, we have a duplicate with a new token, and the same object with the new token
+        cout << "Class template already exists." << endl;
+        addNewObject = false;
+    }
+    else
     {
-        Add(object);
+        object = make_shared<ClassTemplate>(parent, SourceLocation(token), name, accessSpecifier);
+    }
+    UpdateStack(token, parentToken);
+    if (addNewObject)
+    {
+        Container::Ptr parentContainer = dynamic_pointer_cast<Container>(object->Parent());
+        if (parentContainer != nullptr)
+        {
+            parentContainer->Add(object);
+        } else
+        {
+            Add(object);
+        }
     }
     AddToMap(token, object);
     return object;
 }
 
-void AST::AddTemplateTypeParameter(CXCursor token, CXCursor parentToken)
+void ASTCollection::AddTemplateTypeParameter(CXCursor token, CXCursor parentToken)
 {
     Declaration::Ptr parent = Find(parentToken);
     std::string name = ConvertString(clang_getCursorSpelling(token));
@@ -531,9 +624,9 @@ void AST::AddTemplateTypeParameter(CXCursor token, CXCursor parentToken)
     cerr << "Panic! No function or class template" << endl;
 }
 
-void AST::ShowInfo()
+void ASTCollection::ShowInfo()
 {
-    cout << "AST stack contents:" << endl;
+    cout << "AST collection stack contents:" << endl;
     for (size_t index = 0; index < _stack.Count(); ++index)
     {
         CXCursor element = _stack.At(_stack.Count() - index - 1);
@@ -564,7 +657,7 @@ void AST::ShowInfo()
             std::cout << setw(3) << index << " " << strKind << ": " << strType << ": " << std::endl;
         }
     }
-    cout << "AST token map:" << endl;
+    cout << "AST collection token map:" << endl;
     for (auto element : _tokenLookupMap)
     {
         std::string token = ConvertString(clang_getCursorSpelling(element.first));
@@ -576,7 +669,7 @@ void AST::ShowInfo()
     }
 }
 
-void AST::UpdateStack(CXCursor token, CXCursor parentToken)
+void ASTCollection::UpdateStack(CXCursor token, CXCursor parentToken)
 {
     ssize_t index = _stack.Find(parentToken);
     if (index > 0)

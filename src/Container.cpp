@@ -16,7 +16,7 @@ using namespace Utility;
 namespace CPPParser
 {
 
-void Container::Add(const std::shared_ptr<Declaration> & value)
+void Container::Add(const std::shared_ptr<Element> & value)
 {
     _contents.push_back(value);
     Namespace::Ptr aNamespace = dynamic_pointer_cast<Namespace>(value);

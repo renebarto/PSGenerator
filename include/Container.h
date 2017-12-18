@@ -21,8 +21,8 @@ public:
     using List = std::vector<Ptr>;
 
     Container() = delete;
-    explicit Container(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
-        : Declaration(std::move(parent), std::move(name), accessSpecifier)
+    explicit Container(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier)
+        : Declaration(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier)
         , _contents()
         , _namespaces()
         , _classes()
@@ -45,7 +45,7 @@ public:
     const PtrList<Variable> & Variables() const { return _variables; }
     const PtrList<FunctionTemplate> & FunctionTemplates() const { return _functionTemplates; }
 
-    virtual void Add(const std::shared_ptr<Declaration> & value);
+    virtual void Add(const std::shared_ptr<Element> & value);
 
     bool FindNamespace(const std::string & name, std::shared_ptr<Namespace> & result);
     bool FindClass(const std::string & name, std::shared_ptr<Class> & result);
@@ -69,7 +69,7 @@ public:
     }
 
 protected:
-    PtrList<Declaration> _contents;
+    PtrList<Element> _contents;
     PtrList<Namespace> _namespaces;
     PtrList<Class> _classes;
     PtrList<Struct> _structs;

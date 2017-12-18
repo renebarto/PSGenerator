@@ -46,7 +46,7 @@ TEST_FIXTURE(TreeInfoTest, SingleNamespace)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Namespace>(Declaration::WeakPtr(), "NS"));
+    ast.Add(make_shared<Namespace>(Element::WeakPtr(), SourceLocation(), "NS"));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -69,7 +69,7 @@ TEST_FIXTURE(TreeInfoTest, SingleNamespaceAnonymous)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Namespace>(Declaration::WeakPtr(), ""));
+    ast.Add(make_shared<Namespace>(Element::WeakPtr(), SourceLocation(), ""));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -92,7 +92,7 @@ TEST_FIXTURE(TreeInfoTest, SingleClass)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Class>(Declaration::WeakPtr(), "A", AccessSpecifier::Public));
+    ast.Add(make_shared<Class>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -113,10 +113,10 @@ TEST_FIXTURE(TreeInfoTest, SingleClassWithMethods)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aClass = make_shared<Class>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aClass->Add(make_shared<Constructor>(aClass, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aClass->Add(make_shared<Destructor>(aClass, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aClass->Add(make_shared<Method>(aClass, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
+    auto aClass = make_shared<Class>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aClass->Add(make_shared<Constructor>(aClass, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aClass->Add(make_shared<Destructor>(aClass, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aClass->Add(make_shared<Method>(aClass, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
     ast.Add(aClass);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -151,11 +151,11 @@ TEST_FIXTURE(TreeInfoTest, SingleClassWithMethodsAndVariables)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aClass = make_shared<Class>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aClass->Add(make_shared<Constructor>(aClass, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aClass->Add(make_shared<Destructor>(aClass, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aClass->Add(make_shared<Method>(aClass, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
-    aClass->Add(make_shared<DataMember>(aClass, "X", AccessSpecifier::Public, "int"));
+    auto aClass = make_shared<Class>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aClass->Add(make_shared<Constructor>(aClass, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aClass->Add(make_shared<Destructor>(aClass, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aClass->Add(make_shared<Method>(aClass, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
+    aClass->Add(make_shared<DataMember>(aClass, SourceLocation(), "X", AccessSpecifier::Public, "int"));
     ast.Add(aClass);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -191,7 +191,7 @@ TEST_FIXTURE(TreeInfoTest, SingleStruct)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Struct>(Declaration::WeakPtr(), "A", AccessSpecifier::Public));
+    ast.Add(make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -212,10 +212,10 @@ TEST_FIXTURE(TreeInfoTest, SingleStructWithMethods)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aStruct = make_shared<Struct>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aStruct->Add(make_shared<Constructor>(aStruct, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aStruct->Add(make_shared<Destructor>(aStruct, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aStruct->Add(make_shared<Method>(aStruct, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
+    auto aStruct = make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aStruct->Add(make_shared<Constructor>(aStruct, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aStruct->Add(make_shared<Destructor>(aStruct, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aStruct->Add(make_shared<Method>(aStruct, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::None));
     ast.Add(aStruct);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -250,16 +250,16 @@ TEST_FIXTURE(TreeInfoTest, StructInheritance)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aStructA = make_shared<Struct>(Declaration::WeakPtr(), "A", AccessSpecifier::Public);
-    aStructA->Add(make_shared<Constructor>(aStructA, "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aStructA->Add(make_shared<Destructor>(aStructA, "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aStructA->Add(make_shared<Method>(aStructA, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::PureVirtual));
+    auto aStructA = make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public);
+    aStructA->Add(make_shared<Constructor>(aStructA, SourceLocation(), "A", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aStructA->Add(make_shared<Destructor>(aStructA, SourceLocation(), "~A", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aStructA->Add(make_shared<Method>(aStructA, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags::PureVirtual));
     ast.Add(aStructA);
-    auto aStructB = make_shared<Struct>(Declaration::WeakPtr(), "B", AccessSpecifier::Public);
-    aStructB->Add(make_shared<Constructor>(aStructB, "B", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
-    aStructB->Add(make_shared<Destructor>(aStructB, "~B", AccessSpecifier::Public, FunctionFlags::Virtual));
-    aStructB->Add(make_shared<Method>(aStructB, "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags(FunctionFlags::Virtual | FunctionFlags::Override)));
-    aStructB->AddBase(make_shared<Inheritance>(aStructB, "A", AccessSpecifier::Public, aStructA, false));
+    auto aStructB = make_shared<Struct>(Element::WeakPtr(), SourceLocation(), "B", AccessSpecifier::Public);
+    aStructB->Add(make_shared<Constructor>(aStructB, SourceLocation(), "B", AccessSpecifier::Public, ParameterList(), FunctionFlags::Default));
+    aStructB->Add(make_shared<Destructor>(aStructB, SourceLocation(), "~B", AccessSpecifier::Public, FunctionFlags::Virtual));
+    aStructB->Add(make_shared<Method>(aStructB, SourceLocation(), "DoIt", AccessSpecifier::Public, "int", ParameterList{Parameter("x", "int")}, FunctionFlags(FunctionFlags::Virtual | FunctionFlags::Override)));
+    aStructB->AddBase(make_shared<Inheritance>(aStructB, SourceLocation(), "A", AccessSpecifier::Public, aStructA, false));
     ast.Add(aStructB);
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -311,7 +311,7 @@ TEST_FIXTURE(TreeInfoTest, SingleEnum)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "A", AccessSpecifier::Public, "");
+    auto aEnum = make_shared<Enum>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public, "");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -335,7 +335,7 @@ TEST_FIXTURE(TreeInfoTest, SingleEnumAnonymous)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "", AccessSpecifier::Public, "");
+    auto aEnum = make_shared<Enum>(Element::WeakPtr(), SourceLocation(), "", AccessSpecifier::Public, "");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -359,7 +359,7 @@ TEST_FIXTURE(TreeInfoTest, SingleEnumWithBaseType)
     TreeInfo visitor(stream);
 
     AST ast;
-    auto aEnum = make_shared<Enum>(Declaration::WeakPtr(), "A", AccessSpecifier::Public, "short");
+    auto aEnum = make_shared<Enum>(Element::WeakPtr(), SourceLocation(), "A", AccessSpecifier::Public, "short");
     aEnum->AddValue("X", 1);
     ast.Add(aEnum);
 
@@ -383,7 +383,7 @@ TEST_FIXTURE(TreeInfoTest, SingleVariable)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Variable>(Declaration::WeakPtr(), "x", AccessSpecifier::Public, "const int"));
+    ast.Add(make_shared<Variable>(Element::WeakPtr(), SourceLocation(), "x", AccessSpecifier::Public, "const int"));
 
     EXPECT_TRUE(ast.Visit(visitor));
 
@@ -403,7 +403,7 @@ TEST_FIXTURE(TreeInfoTest, SingleFunction)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Function>(Declaration::WeakPtr(), "x", "int",
+    ast.Add(make_shared<Function>(Element::WeakPtr(), SourceLocation(), "x", "int",
                                   ParameterList{Parameter("y", "int")}, FunctionFlags::None));
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -428,7 +428,7 @@ TEST_FIXTURE(TreeInfoTest, SingleFunctionStatic)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Function>(Declaration::WeakPtr(), "x", "int",
+    ast.Add(make_shared<Function>(Element::WeakPtr(), SourceLocation(), "x", "int",
                                   ParameterList{Parameter("y", "int")}, FunctionFlags::Static));
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -453,7 +453,7 @@ TEST_FIXTURE(TreeInfoTest, SingleFunctionInline)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Function>(Declaration::WeakPtr(), "x", "int",
+    ast.Add(make_shared<Function>(Element::WeakPtr(), SourceLocation(), "x", "int",
                                   ParameterList{Parameter("y", "int")}, FunctionFlags::Inline));
 
     EXPECT_TRUE(ast.Visit(visitor));
@@ -478,7 +478,7 @@ TEST_FIXTURE(TreeInfoTest, SingleTypedef)
     TreeInfo visitor(stream);
 
     AST ast;
-    ast.Add(make_shared<Typedef>(Declaration::WeakPtr(), "x", AccessSpecifier::Invalid, "int"));
+    ast.Add(make_shared<Typedef>(Element::WeakPtr(), SourceLocation(), "x", AccessSpecifier::Invalid, "int"));
 
     EXPECT_TRUE(ast.Visit(visitor));
 

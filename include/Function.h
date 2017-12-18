@@ -53,10 +53,10 @@ public:
     using List = std::vector<Ptr>;
 
     FunctionBase() = delete;
-    explicit FunctionBase(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit FunctionBase(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                           std::string type, ParameterList parameters,
                           FunctionFlags flags)
-        : Declaration(std::move(parent), std::move(name), accessSpecifier)
+        : Declaration(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier)
           , _type(std::move(type))
           , _parameters(std::move(parameters))
           , _flags(flags)
@@ -91,14 +91,37 @@ public:
     using List = std::vector<Ptr>;
     Constructor() = delete;
 
-    explicit Constructor(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit Constructor(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                          ParameterList parameters,
                          FunctionFlags flags)
-        : FunctionBase(std::move(parent), std::move(name), accessSpecifier,
+        : FunctionBase(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier,
                    "", std::move(parameters), flags)
     {
     }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result;
+        if (Parent() != nullptr)
+        {
+            result = Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        result += "(";
+        bool firstParameter = true;
+        for (auto const & parameter : Parameters())
+        {
+            if (!firstParameter)
+            {
+                result += ", ";
+            }
+            result += parameter.Type();
+            firstParameter = false;
+        }
+        result += ")";
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);
@@ -125,13 +148,24 @@ public:
     using List = std::vector<Ptr>;
     Destructor() = delete;
 
-    explicit Destructor(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit Destructor(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                         FunctionFlags flags)
-        : FunctionBase(std::move(parent), std::move(name), accessSpecifier,
+        : FunctionBase(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier,
                    "", ParameterList(), flags)
     {
     }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result;
+        if (Parent() != nullptr)
+        {
+            result = Parent()->QualifiedName() + "::";
+        }
+        result += Name() + "()";
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);
@@ -158,14 +192,37 @@ public:
     using List = std::vector<Ptr>;
 
     Method() = delete;
-    explicit Method(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier,
+    explicit Method(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier,
                         std::string type, ParameterList parameters,
                         FunctionFlags flags)
-        : FunctionBase(std::move(parent), std::move(name), accessSpecifier,
+        : FunctionBase(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier,
                    std::move(type), std::move(parameters), flags)
     {
     }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result = Type() + " ";
+        if (Parent() != nullptr)
+        {
+            result += Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        result += "(";
+        bool firstParameter = true;
+        for (auto const & parameter : Parameters())
+        {
+            if (!firstParameter)
+            {
+                result += ", ";
+            }
+            result += parameter.Type();
+            firstParameter = false;
+        }
+        result += ")";
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);
@@ -192,14 +249,37 @@ public:
     using List = std::vector<Ptr>;
 
     Function() = delete;
-    explicit Function(Declaration::WeakPtr parent, std::string name,
+    explicit Function(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name,
                       std::string type, ParameterList parameters,
                       FunctionFlags flags)
-        : FunctionBase(std::move(parent), std::move(name), AccessSpecifier::Invalid,
+        : FunctionBase(std::move(parent), std::move(sourceLocation), std::move(name), AccessSpecifier::Invalid,
                        std::move(type), std::move(parameters), flags)
     {
     }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result = Type() + " ";
+        if (Parent() != nullptr)
+        {
+            result += Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        result += "(";
+        bool firstParameter = true;
+        for (auto const & parameter : Parameters())
+        {
+            if (!firstParameter)
+            {
+                result += ", ";
+            }
+            result += parameter.Type();
+            firstParameter = false;
+        }
+        result += ")";
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);
@@ -226,10 +306,10 @@ public:
     using List = std::vector<Ptr>;
 
     FunctionTemplate() = delete;
-    explicit FunctionTemplate(Declaration::WeakPtr parent, std::string name,
+    explicit FunctionTemplate(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name,
                       std::string type, ParameterList parameters,
                       FunctionFlags flags)
-        : FunctionBase(std::move(parent), std::move(name), AccessSpecifier::Invalid,
+        : FunctionBase(std::move(parent), std::move(sourceLocation), std::move(name), AccessSpecifier::Invalid,
                        std::move(type), std::move(parameters), flags)
         , _templateParameters()
     {
@@ -237,6 +317,40 @@ public:
 
     const std::vector<std::string> & TemplateParameters() const { return _templateParameters; }
 
+    virtual std::string QualifiedDescription() const override { return QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result = "template<";
+        bool firstTemplateParameter = true;
+        for (auto const & parameter : TemplateParameters())
+        {
+            if (!firstTemplateParameter)
+            {
+                result += ", ";
+            }
+            result += "class " + parameter;
+            firstTemplateParameter = false;
+        }
+        result += "> " + Type() + " ";
+        if (Parent() != nullptr)
+        {
+            result += Parent()->QualifiedName() + "::";
+        }
+        result += Name();
+        result += "(";
+        bool firstParameter = true;
+        for (auto const & parameter : Parameters())
+        {
+            if (!firstParameter)
+            {
+                result += ", ";
+            }
+            result += parameter.Type();
+            firstParameter = false;
+        }
+        result += ")";
+        return result;
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);

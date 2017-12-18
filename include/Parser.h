@@ -15,74 +15,14 @@
 #include "include/Struct.h"
 #include "include/ClassTemplate.h"
 #include "include/AST.h"
-#include "include/TraversalTree.h"
+#include "include/ASTCollection.h"
+#include "include/SymbolStack.h"
 
 namespace CPPParser
 {
 
-template<typename T>
-class Stack
-{
-public:
-    Stack()
-        : _stack()
-    {}
-
-    bool AtTop(T element)
-    {
-        return (_stack.size() >= 1) && (Top() == element);
-    }
-    void Push(T element)
-    {
-        _stack.push_back(element);
-    }
-    T Top()
-    {
-        return _stack.at(_stack.size() - 1);
-    }
-    T Pop()
-    {
-        auto result = Top();
-        _stack.pop_back();
-        return result;
-    }
-    void RemoveTopElements(size_t count)
-    {
-        size_t removeCount = std::max(count, _stack.size());
-        for (size_t index = 0; index < removeCount; ++index)
-        {
-            _stack.pop_back();
-        }
-    }
-    ssize_t Find(T element) const
-    {
-        // Returns 1 for last element, 2 for one but last, etc., and 0 for not found.
-        for (size_t index = 0; index < _stack.size(); ++index)
-        {
-            auto value = _stack[_stack.size() - index - 1];
-            if (element == value)
-            {
-                return index;
-            }
-        }
-        return -1;
-    }
-    T At(size_t index) const
-    {
-        // Index is 0 for last element, 1 for one but last, etc.
-        return _stack[_stack.size() - index - 1];
-    }
-    size_t Count() const
-    {
-        return _stack.size();
-    }
-
-private:
-    std::deque<T> _stack;
-};
-
 using TokenLookupMap = std::map<CXCursor, Declaration::Ptr>;
-using TypeLookupMap = std::map<CXType, Declaration::Ptr>;
+using TypeLookupMap = std::map<std::string, Declaration::Ptr>;
 
 using OptionsList = std::vector<std::string>;
 class Parser
@@ -94,6 +34,7 @@ public:
     bool Parse(const OptionsList & options);
 
     const AST & GetAST() const { return _ast; }
+    const ASTCollection & GetASTCollection() const { return _astCollection; }
 
     void Show(std::ostream & stream);
     void TraverseTree(std::ostream & stream);
@@ -104,45 +45,35 @@ public:
 private:
     std::string _path;
     std::string _fileName;
+    ASTCollection _astCollection;
     AST _ast;
-    AST _traversalTree;
     CXCursor _token;
     CXCursor _parentToken;
-    Stack<CXCursor> _stack;
-    Stack<CXCursor> _traversalStack;
-    TokenLookupMap _tokenLookupMap;
+    SymbolStack<CXCursor> _traversalStack;
     TokenLookupMap _tokenLookupMapTraversal;
     TypeLookupMap _typeLookupMap;
 
-    bool FindNamespaceByName(Declaration::Ptr parent, const std::string & name, Namespace::Ptr & result);
-    bool FindClassByName(Declaration::Ptr parent, const std::string & name, Class::Ptr & result);
-    bool FindStructByName(Declaration::Ptr parent, const std::string & name, Struct::Ptr & result);
-    bool FindClassTemplateByName(Declaration::Ptr parent, const std::string & name, ClassTemplate::Ptr & result);
-    bool FindEnumByName(Declaration::Ptr parent, const std::string & name, Enum::Ptr & result);
+    void AddToMap(Declaration::Ptr object);
+    void AddNamespace(CXCursor token, CXCursor parentToken);
+    void AddClass(CXCursor token, CXCursor parentToken);
+    void AddStruct(CXCursor token, CXCursor parentToken);
+    void AddConstructor(CXCursor token, CXCursor parentToken);
+    void AddDestructor(CXCursor token, CXCursor parentToken);
+    void AddMethod(CXCursor token, CXCursor parentToken);
+    void AddDataMember(CXCursor token, CXCursor parentToken);
+    void AddEnum(CXCursor token, CXCursor parentToken);
+    void AddEnumValue(CXCursor token, CXCursor parentToken);
+    void AddTypedef(CXCursor token, CXCursor parentToken);
+    void AddVariable(CXCursor token, CXCursor parentToken);
+    void AddFunction(CXCursor token, CXCursor parentToken);
+    void AddBaseClass(CXCursor token, CXCursor parentToken);
+    void AddFunctionTemplate(CXCursor token, CXCursor parentToken);
+    void AddClassTemplate(CXCursor token, CXCursor parentToken);
+    void AddTemplateTypeParameter(CXCursor token, CXCursor parentToken);
+    void AddAccessSpecifier(CXCursor token, CXCursor parentToken);
+    void AddInclude(CXCursor token, CXCursor parentToken);
 
-    void AddToMap(CXCursor token, Declaration::Ptr object);
-    void AddNamespace(Declaration::Ptr parent, CXCursor token);
-    void AddClass(Declaration::Ptr parent, CXCursor token);
-    void AddStruct(Declaration::Ptr parent, CXCursor token);
-    void AddEnum(Declaration::Ptr parent, CXCursor token);
-    void AddEnumValue(Declaration::Ptr parent, CXCursor token);
-    void AddConstructor(Declaration::Ptr parent, CXCursor token);
-    void AddDestructor(Declaration::Ptr parent, CXCursor token);
-    void AddMethod(Declaration::Ptr parent, CXCursor token);
-    void AddBaseClass(Declaration::Ptr parent, CXCursor token);
-    void AddTypedef(Declaration::Ptr parent, CXCursor token);
-    void AddVariable(Declaration::Ptr parent, CXCursor token);
-    void AddDataMember(Declaration::Ptr parent, CXCursor token);
-    void AddFunction(Declaration::Ptr parent, CXCursor token);
-    void AddFunctionTemplate(Declaration::Ptr parent, CXCursor token);
-    void AddClassTemplate(Declaration::Ptr parent, CXCursor token);
-    void AddTemplateTypeParameter(Declaration::Ptr parent, CXCursor token);
-    void AddAccessSpecifier(Declaration::Ptr parent, CXCursor token);
-    void AddInclude(Declaration::Ptr parent, CXCursor token);
-
-    void UpdateStack();
-    void ShowStack();
-    void ShowTraversalStack();
+    void ShowTypeMap();
 };
 
 } // namespace CPPParser

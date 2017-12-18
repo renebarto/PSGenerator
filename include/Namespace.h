@@ -17,10 +17,20 @@ public:
     using List = std::vector<Ptr>;
 
     Namespace() = delete;
-    explicit Namespace(Declaration::WeakPtr parent, std::string name)
-        : Container(std::move(parent), std::move(name), AccessSpecifier::Invalid)
+    explicit Namespace(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name)
+        : Container(std::move(parent), std::move(sourceLocation), std::move(name), AccessSpecifier::Invalid)
     {}
 
+    virtual std::string QualifiedDescription() const override { return "namespace " + QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result;
+        if (Parent() != nullptr)
+        {
+            result = Parent()->QualifiedName() + "::";
+        }
+        return result + (Name().empty() ? "<anonymous>" : Name());
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);

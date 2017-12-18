@@ -16,10 +16,20 @@ public:
     using List = std::vector<Ptr>;
 
     Struct() = delete;
-    explicit Struct(Declaration::WeakPtr parent, std::string name, AccessSpecifier accessSpecifier)
-        : Object(std::move(parent), std::move(name), accessSpecifier, AccessSpecifier::Public)
+    explicit Struct(Element::WeakPtr parent, SourceLocation sourceLocation, std::string name, AccessSpecifier accessSpecifier)
+        : Object(std::move(parent), std::move(sourceLocation), std::move(name), accessSpecifier, AccessSpecifier::Public)
     {}
 
+    virtual std::string QualifiedDescription() const override { return "struct " + QualifiedName(); }
+    virtual std::string QualifiedName() const override
+    {
+        std::string result;
+        if (Parent() != nullptr)
+        {
+            result = Parent()->QualifiedName() + "::";
+        }
+        return result + Name();
+    }
     virtual bool TraverseBegin(IASTVisitor & visitor) const override
     {
         return visitor.Enter(*this);
